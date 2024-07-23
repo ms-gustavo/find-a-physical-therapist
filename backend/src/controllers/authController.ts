@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import User, { IUser } from "../models/User";
 import { findUser } from "../utils/userExists";
 import { FindUserSuccessResponse } from "../interfaces/interface";
+import { serverMessagesResponses } from "../utils/serverMessagesResponses";
 
 export const registerNewUser = async (req: Request, res: Response) => {
   const { name, email, password, role, speciality, location }: IUser = req.body;
@@ -35,7 +36,9 @@ export const registerNewUser = async (req: Request, res: Response) => {
       user: { id: newUser._id, name, email, role, speciality, location },
     });
   } catch (error) {
-    res.status(500).json({ message: "Something went wrong" });
+    res
+      .status(500)
+      .json({ message: serverMessagesResponses.somethingWentWrong });
     console.error(error);
   }
 };
@@ -52,7 +55,9 @@ export const login = async (req: Request, res: Response) => {
 
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
     if (!isPasswordCorrect) {
-      return res.status(404).json({ message: `Invalid credentials` });
+      return res
+        .status(404)
+        .json({ message: serverMessagesResponses.invalidCredentials });
     }
 
     const token = jwt.sign(
@@ -71,7 +76,9 @@ export const login = async (req: Request, res: Response) => {
       },
     });
   } catch (error) {
-    res.status(500).json({ message: `Something went wrong` });
+    res
+      .status(500)
+      .json({ message: serverMessagesResponses.somethingWentWrong });
     console.error(error);
   }
 };

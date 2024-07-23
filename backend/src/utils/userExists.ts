@@ -4,6 +4,7 @@ import {
   FindUserSuccessResponse,
 } from "../interfaces/interface";
 import User, { IUser } from "../models/User";
+import { serverMessagesResponses } from "./serverMessagesResponses";
 
 export async function findUser(
   email: string,
@@ -15,18 +16,18 @@ export async function findUser(
     register: {
       userExists: {
         status: 400,
-        message: "User already exists",
+        message: serverMessagesResponses.userAlreadyExists,
       } as FindUserRegisterResponse,
     },
     login: {
       userExists: {
         status: 200,
-        message: "User found",
+        message: serverMessagesResponses.userFound,
         user: user as IUser,
       } as FindUserSuccessResponse,
       userNotFound: {
         status: 404,
-        message: "User not found",
+        message: serverMessagesResponses.userNotFound,
       } as FindUserRegisterResponse,
     },
   };
@@ -36,7 +37,7 @@ export async function findUser(
       ? responseMap.register.userExists
       : ({
           status: 200,
-          message: "Proceed with registration",
+          message: serverMessagesResponses.proceedWithRegistration,
         } as FindUserRegisterResponse);
   } else {
     return user ? responseMap.login.userExists : responseMap.login.userNotFound;

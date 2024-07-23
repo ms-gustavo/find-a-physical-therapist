@@ -9,7 +9,9 @@ export const validateRegisterUserFields = (
   res: Response,
   next: NextFunction
 ) => {
-  const { error } = registerUserSchema.validate(req.body);
+  const { error } = registerUserSchema.validate(req.body, {
+    abortEarly: false,
+  });
 
   if (error) {
     return res.status(400).json({
