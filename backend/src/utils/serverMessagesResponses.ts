@@ -5,4 +5,6 @@ export const serverMessagesResponses = {
   proceedWithRegistration: "Prosseguir com o cadastro",
   somethingWentWrong: "Algo de errado aconteceu, tente novamente mais tarde",
   invalidCredentials: "E-mail ou senha inválidos",
+  noTokenProvided: "Nenhum token de autenticação fornecido",
+  invalidToken: "Token inválido",
 };
