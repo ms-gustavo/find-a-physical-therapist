@@ -29,3 +29,28 @@ export const updateUser = async (req: AuthenticatedRequest, res: Response) => {
     res.status(400).json({ message: error.message });
   }
 };
+
+export const getUserProfile = async (
+  req: AuthenticatedRequest,
+  res: Response
+) => {
+  if (!req.user) {
+    return res
+      .status(401)
+      .json({ message: serverMessagesResponses.unauthenticatedUser });
+  }
+  const userId = req.user._id;
+  try {
+    const user = await User.findById(userId).select("-password");
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ message: serverMessagesResponses.userNotFound });
+    }
+
+    res.status(200).json(user);
+  } catch (error: any) {
+    res.status(400).json({ message: error.message });
+  }
+};
