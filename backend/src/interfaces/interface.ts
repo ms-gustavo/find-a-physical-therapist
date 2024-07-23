@@ -1,3 +1,4 @@
+import { Request } from "express";
 import { IUser } from "../models/User";
 
 export interface FindUserResponse {
@@ -12,3 +13,9 @@ export interface FindUserSuccessResponse extends FindUserResponse {
 export interface FindUserRegisterResponse extends FindUserResponse {}
 
 export type FindUserResult = FindUserSuccessResponse | FindUserRegisterResponse;
+
+export interface AuthenticatedRequest extends Request {
+  user?: {
+    _id: string;
+  };
+}

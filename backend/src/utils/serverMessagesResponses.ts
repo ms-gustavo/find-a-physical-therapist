@@ -7,4 +7,5 @@ export const serverMessagesResponses = {
   invalidCredentials: "E-mail ou senha inválidos",
   noTokenProvided: "Nenhum token de autenticação fornecido",
   invalidToken: "Token inválido",
+  unauthenticatedUser: "Usuário não autenticado",
 };
