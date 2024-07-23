@@ -6,7 +6,7 @@ export interface IUser extends Document {
   password: string;
   role: "CLIENT" | "THERAPIST";
   speciality?: string;
-  location?: {
+  location: {
     type: "Point";
     coordinates: [number, number];
   };
@@ -22,11 +22,11 @@ const userSchema: Schema = new Schema({
     type: {
       type: String,
       enum: ["Point"],
-      required: false,
+      required: true,
     },
     coordinates: {
       type: [Number],
-      required: false,
+      required: true,
     },
   },
 });

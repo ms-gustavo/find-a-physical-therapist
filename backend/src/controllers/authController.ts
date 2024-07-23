@@ -2,14 +2,16 @@ import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User, { IUser } from "../models/User";
+import { findUser } from "../utils/userExists";
+import { FindUserSuccessResponse } from "../interfaces/interface";
 
 export const registerNewUser = async (req: Request, res: Response) => {
   const { name, email, password, role, speciality, location }: IUser = req.body;
 
   try {
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: `User already exists` });
+    const userCheck = await findUser(email, "register");
+    if (userCheck.status !== 200) {
+      return res.status(userCheck.status).json({ message: userCheck.message });
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
@@ -42,15 +44,14 @@ export const login = async (req: Request, res: Response) => {
   const { email, password }: { email: string; password: string } = req.body;
 
   try {
-    const user = await User.findOne({ email });
-
-    if (!user) {
-      return res.status(404).json({ message: `User not found` });
+    const userCheck = await findUser(email, "login");
+    if (userCheck.status !== 200) {
+      return res.status(userCheck.status).json({ message: userCheck.message });
     }
+    const user = (userCheck as FindUserSuccessResponse).user;
 
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
     if (!isPasswordCorrect) {
-      console.log("AQUI 1");
       return res.status(404).json({ message: `Invalid credentials` });
     }
 
