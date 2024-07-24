@@ -1,5 +1,6 @@
 import { Request } from "express";
-import { IUser } from "../models/User";
+import { IClient } from "../models/Client";
+import { ITherapist } from "../models/Therapist";
 
 export interface FindUserResponse {
   status: number;
@@ -7,7 +8,7 @@ export interface FindUserResponse {
 }
 
 export interface FindUserSuccessResponse extends FindUserResponse {
-  user: IUser;
+  user: IClient | ITherapist;
 }
 
 export interface FindUserRegisterResponse extends FindUserResponse {}

@@ -1,16 +1,29 @@
+import { Model } from "mongoose";
 import {
   FindUserRegisterResponse,
   FindUserResult,
   FindUserSuccessResponse,
 } from "../interfaces/interface";
-import User, { IUser } from "../models/User";
+import Client, { IClient } from "../models/Client";
+import Therapist, { ITherapist } from "../models/Therapist";
 import { serverMessagesResponses } from "./serverMessagesResponses";
+
+type UserType = "Client" | "Therapist";
 
 export async function findUser(
   email: string,
-  type: "register" | "login"
+  type: "register" | "login",
+  userType: UserType
 ): Promise<FindUserResult> {
-  const user = await User.findOne({ email });
+  const model: Model<IClient | ITherapist> =
+    userType === "Client"
+      ? (Client as unknown as Model<IClient | ITherapist>)
+      : (Therapist as unknown as Model<IClient | ITherapist>);
+
+  const user = (await model.findOne({ email }).exec()) as
+    | (IClient & Document)
+    | (ITherapist & Document)
+    | null;
 
   const responseMap = {
     register: {
@@ -23,7 +36,7 @@ export async function findUser(
       userExists: {
         status: 200,
         message: serverMessagesResponses.userFound,
-        user: user as IUser,
+        user: user as IClient | ITherapist,
       } as FindUserSuccessResponse,
       userNotFound: {
         status: 404,

@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
-import User from "../models/User";
+import User from "../models/Client";
+import Therapist from "../models/Therapist";
 
 export const getAllTherapists = async (req: Request, res: Response) => {
   try {
@@ -15,13 +16,13 @@ export const getAllTherapists = async (req: Request, res: Response) => {
 export const searchTherapistByName = async (req: Request, res: Response) => {
   const { name } = req.query;
   try {
-    const query: any = { role: "THERAPIST" };
+    const query: any = {};
 
     if (name) {
       query.name = { $regex: name, $options: "i" };
     }
 
-    const therapists = await User.find(query).select("-password");
+    const therapists = await Therapist.find(query).select("-password");
     res.status(200).json({ therapists });
   } catch (error: any) {}
 };
@@ -30,7 +31,7 @@ export const searchTherapists = async (req: Request, res: Response) => {
   const { location, speciality, maxDistance, minCost, maxCost } = req.query;
 
   try {
-    const query: any = { role: "THERAPIST" };
+    const query: any = {};
 
     if (speciality) {
       query.speciality = speciality;
@@ -56,7 +57,7 @@ export const searchTherapists = async (req: Request, res: Response) => {
       };
     }
 
-    const therapists = await User.find(query).select("-password");
+    const therapists = await Therapist.find(query).select("-password");
     res.status(200).json({ therapists });
   } catch (error: any) {
     res.status(400).json({ message: error.message });

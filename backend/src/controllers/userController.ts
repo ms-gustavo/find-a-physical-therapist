@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import User from "../models/User";
+import User from "../models/Client";
 import { serverMessagesResponses } from "../utils/serverMessagesResponses";
 import { AuthenticatedRequest } from "../interfaces/interface";
 
