@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
-import User from "../models/Client";
+import Client from "../models/Client";
 import { serverMessagesResponses } from "../utils/serverMessagesResponses";
 import { AuthenticatedRequest } from "../interfaces/interface";
+import { getUserModel } from "../utils/getUserModel";
 
 export const updateUser = async (req: AuthenticatedRequest, res: Response) => {
   if (!req.user) {
@@ -13,7 +14,7 @@ export const updateUser = async (req: AuthenticatedRequest, res: Response) => {
   const { name, speciality, location } = req.body;
 
   try {
-    const updatedUser = await User.findByIdAndUpdate(
+    const updatedUser = await Client.findByIdAndUpdate(
       userId,
       { name, speciality, location },
       { new: true, runValidators: true }
@@ -41,15 +42,15 @@ export const getUserProfile = async (
   }
   const userId = req.user._id;
   try {
-    const user = await User.findById(userId).select("-password");
+    const userResult = await getUserModel(userId);
 
-    if (!user) {
+    if (!userResult) {
       return res
         .status(404)
         .json({ message: serverMessagesResponses.userNotFound });
     }
 
-    res.status(200).json(user);
+    res.status(200).json(userResult);
   } catch (error: any) {
     res.status(400).json({ message: error.message });
   }
