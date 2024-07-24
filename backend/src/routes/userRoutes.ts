@@ -1,10 +1,15 @@
 import express from "express";
-import { updateUser, getUserProfile } from "../controllers/userController";
+import {
+  updateClient,
+  getUserProfile,
+  updateTherapist,
+} from "../controllers/userController";
 import { authenticate } from "../middlewares/authMiddleware";
 
 const router = express.Router();
 
-router.put("/profile", authenticate, updateUser);
+router.put("/client/profile", authenticate, updateClient);
+router.put("/therapist/profile", authenticate, updateTherapist);
 router.get("/profile", authenticate, getUserProfile);
 
 export default router;

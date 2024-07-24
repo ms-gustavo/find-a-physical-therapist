@@ -20,3 +20,16 @@ export interface AuthenticatedRequest extends Request {
     _id: string;
   };
 }
+
+export interface getUserProfileProps {
+  type: "client" | "therapist";
+  userId: string;
+  updateFields: {
+    name?: string;
+    speciality?: string[];
+    location?: {
+      type: "Point";
+      coordinates: [number, number];
+    };
+  };
+}
