@@ -5,6 +5,7 @@ export interface ITherapist extends Document {
   email: string;
   password: string;
   speciality: string[];
+  mediumCost: number;
   location: {
     type: "Point";
     coordinates: [number, number];
@@ -17,6 +18,7 @@ const therapistSchema: Schema = new Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   speciality: { type: Array, required: true },
+  mediumCost: { type: Number, required: true },
   location: {
     type: {
       type: String,

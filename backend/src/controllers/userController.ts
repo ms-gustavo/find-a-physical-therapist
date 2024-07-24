@@ -44,13 +44,13 @@ export const updateTherapist = async (
       .json({ message: serverMessagesResponses.unauthenticatedUser });
   }
   const userId = req.user._id;
-  const { name, speciality, location } = req.body;
+  const { name, speciality, mediumCost, location } = req.body;
 
   try {
     const updatedUser = await getClientOrTherapistProfile({
       type: "therapist",
       userId: userId,
-      updateFields: { name, speciality, location },
+      updateFields: { name, speciality, mediumCost, location },
     });
 
     if (!updatedUser) {

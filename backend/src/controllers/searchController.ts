@@ -1,12 +1,9 @@
 import { Request, Response } from "express";
-import User from "../models/Client";
 import Therapist from "../models/Therapist";
 
 export const getAllTherapists = async (req: Request, res: Response) => {
   try {
-    const therapists = await User.find({ role: "THERAPIST" }).select(
-      "-password"
-    );
+    const therapists = await Therapist.find({}).select("-password");
     res.status(200).json({ therapists });
   } catch (error: any) {
     res.status(400).json({ message: error.message });
@@ -27,7 +24,7 @@ export const searchTherapistByName = async (req: Request, res: Response) => {
   } catch (error: any) {}
 };
 
-export const searchTherapists = async (req: Request, res: Response) => {
+export const searchTherapistsByQuery = async (req: Request, res: Response) => {
   const { location, speciality, maxDistance, minCost, maxCost } = req.query;
 
   try {
@@ -37,22 +34,19 @@ export const searchTherapists = async (req: Request, res: Response) => {
       query.speciality = speciality;
     }
 
-    if (maxDistance) {
-      query.maxDistance = maxDistance;
-    }
-
     if (minCost || maxCost) {
-      query.cost = {};
-      if (minCost) query.cost.$gte = parseFloat(minCost as string);
-      if (maxCost) query.cost.$lte = parseFloat(maxCost as string);
+      query.mediumCost = {};
+      if (minCost) query.mediumCost.$gte = parseFloat(minCost as string);
+      if (maxCost) query.mediumCost.$lte = parseFloat(maxCost as string);
     }
 
     if (location) {
       const [lng, lat] = (location as string).split(",").map(Number);
+      const distance = maxDistance ? parseInt(maxDistance as string) : 5000;
       query.location = {
         $near: {
           $geometry: { type: "Point", coordinates: [lng, lat] },
-          $maxDistance: maxDistance ? maxDistance : 5000,
+          $maxDistance: distance,
         },
       };
     }

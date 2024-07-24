@@ -1,6 +1,6 @@
 import express from "express";
 import {
-  searchTherapists,
+  searchTherapistsByQuery,
   getAllTherapists,
   searchTherapistByName,
 } from "../controllers/searchController";
@@ -8,7 +8,7 @@ import {
 const router = express.Router();
 
 router.get("/therapistbyname", searchTherapistByName);
-router.get("/alltherapists", getAllTherapists);
-router.get("/therapists", searchTherapists);
+router.get("/getalltherapists", getAllTherapists);
+router.get("/therapists", searchTherapistsByQuery);
 
 export default router;
