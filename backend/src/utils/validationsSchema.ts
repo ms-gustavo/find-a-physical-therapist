@@ -60,3 +60,12 @@ export const loginSchema = Joi.object({
     "any.required": "A senha é obrigatória",
   }),
 });
+
+export const consultSchema = Joi.object({
+  therapistId: Joi.string().required().messages({
+    "any.required": "É necessário selecionar um terapeuta",
+  }),
+  datetime: Joi.date().iso().required().messages({
+    "any.required": "A data e hora da consulta são obrigatórias",
+  }),
+});

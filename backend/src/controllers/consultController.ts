@@ -2,6 +2,7 @@ import { Response } from "express";
 import { AuthenticatedRequest } from "../interfaces/interface";
 import { serverMessagesResponses } from "../utils/serverMessagesResponses";
 import Consultation from "../models/Consultation";
+import { formatDate } from "../utils/formatDate";
 
 export const createAConsult = async (
   req: AuthenticatedRequest,
@@ -12,17 +13,8 @@ export const createAConsult = async (
       .status(401)
       .json({ message: serverMessagesResponses.unauthenticatedUser });
   }
-
-  const { therapistId, date, time } = req.body;
-
-  //VALIDATOR
-  if (!therapistId || !date || !time) {
-    return res
-      .status(400)
-      .json({ message: `Therapist ID, date and time are required` });
-  }
-
-  //COMPONENTATION
+  const { therapistId, datetime } = req.body;
+  const { date, time } = formatDate(datetime);
   try {
     const newConsultation = new Consultation({
       clientId: req.user._id,
