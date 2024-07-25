@@ -8,4 +8,5 @@ export const serverMessagesResponses = {
   noTokenProvided: "Nenhum token de autenticação fornecido",
   invalidToken: "Token inválido",
   unauthenticatedUser: "Usuário não autenticado",
+  therapistNotFound: "Fisioterapeuta não encontrado",
 };

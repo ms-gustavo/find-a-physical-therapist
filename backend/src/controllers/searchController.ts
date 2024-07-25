@@ -1,5 +1,24 @@
 import { Request, Response } from "express";
 import Therapist from "../models/Therapist";
+import { serverMessagesResponses } from "../utils/serverMessagesResponses";
+
+export const getTherapistById = async (req: Request, res: Response) => {
+  const { therapistId } = req.params;
+
+  try {
+    const therapist = await Therapist.findById(therapistId).select("-password");
+
+    if (!therapist) {
+      return res
+        .status(404)
+        .json({ message: serverMessagesResponses.therapistNotFound });
+    }
+
+    res.status(200).json(therapist);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 export const getAllTherapists = async (req: Request, res: Response) => {
   try {
