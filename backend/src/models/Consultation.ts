@@ -1,8 +1,8 @@
-import mongoose, { Schema, model, Document } from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
 
 export interface IConsultation extends Document {
-  clientId: string;
-  therapistId: string;
+  clientId: mongoose.Types.ObjectId;
+  therapistId: mongoose.Types.ObjectId;
   date: Date;
   time: string;
   status: "scheduled" | "completed" | "cancelled";

@@ -69,3 +69,15 @@ export const consultSchema = Joi.object({
     "any.required": "A data e hora da consulta são obrigatórias",
   }),
 });
+
+export const reviewSchema = Joi.object({
+  therapistId: Joi.string().required().messages({
+    "any.required": "É necessário selecionar um terapeuta",
+  }),
+  rating: Joi.number().min(1).max(5).required().messages({
+    "any.required": "A classificação é obrigatória",
+    "number.min": "A avaliação mínima é 1",
+    "number.max": "A avaliação máxima é 5",
+  }),
+  comment: Joi.string(),
+});
