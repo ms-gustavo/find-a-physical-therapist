@@ -8,22 +8,23 @@ export const authenticate = (
   res: Response,
   next: NextFunction
 ) => {
-  const token = req.header("Authorization")?.replace("Bearer ", "");
-
-  if (!token) {
-    return res
-      .status(401)
-      .json({ message: serverMessagesResponses.noTokenProvided });
-  }
-
   try {
+    const token = req.header("Authorization")?.replace("Bearer ", "");
+    if (!token) {
+      throw new Error(serverMessagesResponses.noTokenProvided);
+    }
     const decoded = jwt.verify(token, process.env.JWT_SECRET! as string) as {
       id: string;
     };
 
     req.user = { _id: decoded.id };
     next();
-  } catch (error) {
-    res.status(401).json({ message: serverMessagesResponses.invalidToken });
+  } catch (error: any) {
+    res.status(401).json({
+      message:
+        error.message === serverMessagesResponses.noTokenProvided
+          ? error.message
+          : serverMessagesResponses.invalidToken,
+    });
   }
 };

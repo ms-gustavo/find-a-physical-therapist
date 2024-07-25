@@ -8,12 +8,7 @@ export const updateClient = async (
   req: AuthenticatedRequest,
   res: Response
 ) => {
-  if (!req.user) {
-    return res
-      .status(401)
-      .json({ message: serverMessagesResponses.unauthenticatedUser });
-  }
-  const userId = req.user._id;
+  const userId = req.user!._id;
   const { name, location } = req.body;
 
   try {
@@ -38,12 +33,7 @@ export const updateTherapist = async (
   req: AuthenticatedRequest,
   res: Response
 ) => {
-  if (!req.user) {
-    return res
-      .status(401)
-      .json({ message: serverMessagesResponses.unauthenticatedUser });
-  }
-  const userId = req.user._id;
+  const userId = req.user!._id;
   const { name, speciality, mediumCost, location } = req.body;
 
   try {
@@ -68,12 +58,7 @@ export const getUserProfile = async (
   req: AuthenticatedRequest,
   res: Response
 ) => {
-  if (!req.user) {
-    return res
-      .status(401)
-      .json({ message: serverMessagesResponses.unauthenticatedUser });
-  }
-  const userId = req.user._id;
+  const userId = req.user!._id;
   try {
     const userResult = await getUserModel(userId);
 

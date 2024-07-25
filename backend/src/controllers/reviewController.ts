@@ -1,34 +1,21 @@
 import { Request, Response } from "express";
 import { AuthenticatedRequest } from "../interfaces/interface";
-import { serverMessagesResponses } from "../utils/serverMessagesResponses";
 import Review from "../models/Review";
-import Client from "../models/Client";
+import { clientExists, therapistExists } from "../utils/findClientOrTherapist";
 
 export const createAReview = async (
   req: AuthenticatedRequest,
   res: Response
 ) => {
-  if (!req.user) {
-    return res.status(401).json({
-      message: serverMessagesResponses.unauthenticatedUser,
-    });
-  }
-
   const { therapistId, rating, comment } = req.body;
 
   try {
-    const clientId = req.user._id;
-    console.log("ClientID", clientId);
-
-    const clientExists = await Client.findById(clientId);
-    if (!clientExists) {
-      return res
-        .status(404)
-        .json({ message: serverMessagesResponses.userNotFound });
-    }
+    await therapistExists(therapistId);
+    const clientId = req.user!._id;
+    await clientExists(clientId);
 
     const newReview = new Review({
-      clientId: req.user._id,
+      clientId: req.user!._id,
       therapistId,
       rating,
       comment,
@@ -49,7 +36,6 @@ export const getIndividualReview = async (req: Request, res: Response) => {
       "clientId",
       "name"
     );
-    console.log(reviews);
     res.status(200).json(reviews);
   } catch (error: any) {
     res.status(500).json({ message: error.message });
