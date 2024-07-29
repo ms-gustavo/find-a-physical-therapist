@@ -9,4 +9,6 @@ export const serverMessagesResponses = {
   invalidToken: "Token inválido",
   unauthenticatedUser: "Usuário não autenticado",
   therapistNotFound: "Fisioterapeuta não encontrado",
+  consultAlreadyExists: "Já existe consulta agendada para esse horário",
+  wrongTherapistIdOrDate: "ID do terapeuta ou data incorretos",
 };
