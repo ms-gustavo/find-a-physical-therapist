@@ -20,7 +20,8 @@ export async function findUser(
       ? (Client as unknown as Model<IClient | ITherapist>)
       : (Therapist as unknown as Model<IClient | ITherapist>);
 
-  const user = (await model.findOne({ email }).exec()) as
+  const emailToLowerCase = email.toLowerCase();
+  const user = (await model.findOne({ email: emailToLowerCase }).exec()) as
     | (IClient & Document)
     | (ITherapist & Document)
     | null;

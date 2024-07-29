@@ -18,10 +18,10 @@ export const registerNewClient = async (req: Request, res: Response) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
-
+    const emailToLowerCase = email.toLowerCase();
     const newUser: IClient = new Client({
       name,
-      email,
+      email: emailToLowerCase,
       password: hashedPassword,
       location,
     });
@@ -93,10 +93,10 @@ export const registerNewTherapist = async (req: Request, res: Response) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
-
+    const emailToLowerCase = email.toLowerCase();
     const newTherapist: ITherapist = new Therapist({
       name,
-      email,
+      email: emailToLowerCase,
       password: hashedPassword,
       mediumCost,
       speciality,
