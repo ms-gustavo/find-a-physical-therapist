@@ -47,7 +47,7 @@ export const registerTherapistSchema = Joi.object({
       "any.required": "A localização é obrigatória",
     }),
   inscriptionNumber: Joi.string().required().messages({
-    "any.required": "O número de registro de classe é obrigatório.",
+    "any.required": "O número de registro de classe é obrigatório",
   }),
 });
 
