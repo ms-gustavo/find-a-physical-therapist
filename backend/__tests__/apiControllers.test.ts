@@ -8,12 +8,15 @@ import {
   mockClientLogin,
   mockTherapistLogin,
   newClient,
+  newQueryTherapist,
   newTherapist,
   nonExistentUser,
+  searchApi,
   therapistApi,
   therapistInvalidEmailAddress,
   therapistMessages,
   userMessages,
+  usersApi,
 } from "../testsMocks/authControllerMocks";
 import Client from "../src/models/Client";
 import { findUser } from "../src/utils/userExists";
@@ -21,6 +24,7 @@ import Therapist from "../src/models/Therapist";
 
 let clientToken: string;
 let therapistToken: string;
+let therapistId: any;
 
 function removeKey(
   obj: {
@@ -124,6 +128,7 @@ describe("Auth Controller", () => {
         .post(therapistApi.register)
         .send(newTherapist);
       therapistToken = response.body.token;
+      therapistId = response.body.therapist.id;
       expect(response.status).toBe(201);
       expect(response.body).toHaveProperty("token");
     });
@@ -403,11 +408,11 @@ describe("Auth Controller", () => {
   });
 });
 
-describe("User Controller - Profile", () => {
+describe("User Controller", () => {
   describe("User Controller - Client Profile", () => {
     it("should return user data when requesting user info with a valid token", async () => {
       const response = await request(app)
-        .get("/api/users/profile")
+        .get(usersApi.profile)
         .set("Authorization", `Bearer ${clientToken}`);
 
       expect(response.status).toBe(200);
@@ -416,7 +421,7 @@ describe("User Controller - Profile", () => {
 
     it("should return an error when requesting user info with a invalid token", async () => {
       const response = await request(app)
-        .get("/api/users/profile")
+        .get(usersApi.profile)
         .set("Authorization", `Bearer invalidToken`);
 
       expect(response.status).toBe(401);
@@ -426,7 +431,7 @@ describe("User Controller - Profile", () => {
 
     it("should update client informations", async () => {
       const response = await request(app)
-        .put("/api/users/client/profile")
+        .put(clientApi.profile)
         .set("Authorization", `Bearer ${clientToken}`)
         .send({
           name: "Update Client Test",
@@ -444,7 +449,7 @@ describe("User Controller - Profile", () => {
   describe("User Controller - Therapist Profile", () => {
     it("should return therapist data when requesting user info with a valid token", async () => {
       const response = await request(app)
-        .get("/api/users/profile")
+        .get(usersApi.profile)
         .set("Authorization", `Bearer ${therapistToken}`);
 
       expect(response.status).toBe(200);
@@ -453,7 +458,7 @@ describe("User Controller - Profile", () => {
 
     it("should return an error when requesting user info with a invalid token", async () => {
       const response = await request(app)
-        .get("/api/users/profile")
+        .get(usersApi.profile)
         .set("Authorization", `Bearer invalidToken`);
 
       expect(response.status).toBe(401);
@@ -463,7 +468,7 @@ describe("User Controller - Profile", () => {
 
     it("should update therapist informations", async () => {
       const response = await request(app)
-        .put("/api/users/therapist/profile")
+        .put(therapistApi.profile)
         .set("Authorization", `Bearer ${therapistToken}`)
         .send({
           name: "Update Therapist Test",
@@ -475,6 +480,90 @@ describe("User Controller - Profile", () => {
         "name",
         "Update Therapist Test"
       );
+    });
+  });
+});
+
+describe("Search Controller", () => {
+  describe("Search Controller - Get All Therapists", () => {
+    it("should return all therapists list", async () => {
+      const response = await request(app).get(searchApi.getAllTherapists);
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty("therapists");
+      expect(Array.isArray(response.body.therapists)).toBe(true);
+      expect(response.body.therapists).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            location: expect.any(Object),
+            _id: expect.any(String),
+            name: expect.any(String),
+            email: expect.any(String),
+            mediumCost: expect.any(Number),
+            speciality: expect.any(Array),
+            inscriptionNumber: expect.any(String),
+          }),
+        ])
+      );
+    });
+  });
+
+  describe("Search Controller - Get Therapist By Name", () => {
+    it("should return therapist list filtered by name", async () => {
+      const response = await request(app).get(searchApi.searchByName).query({
+        name: "Therapist",
+      });
+
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty("therapists");
+      expect(Array.isArray(response.body.therapists)).toBe(true);
+
+      response.body.therapists.forEach((therapist: any) => {
+        expect(therapist).toHaveProperty("name");
+        expect(therapist.name).toContain("Therapist");
+      });
+    });
+  });
+
+  describe("Search Controller - Get Therapist By Query", () => {
+    it("should return therapist list filtered by query 'speciality: Speciality Test'", async () => {
+      await request(app).post(therapistApi.register).send(newQueryTherapist);
+      const response = await request(app).get("/api/search/therapists").query({
+        speciality: "Speciality Test",
+      });
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty("therapists");
+      expect(Array.isArray(response.body.therapists)).toBe(true);
+      response.body.therapists.forEach((therapist: any) => {
+        expect(therapist).toHaveProperty("speciality");
+        expect(therapist.speciality).toContain("Speciality Test");
+        expect(therapist).toHaveProperty("name");
+        expect(therapist.name).toBe("Therapist Search By Query Test");
+      });
+    });
+
+    it("should return therapist list filtered by query 'maxCost: 250'", async () => {
+      const response = await request(app).get(searchApi.searchByQuery).query({
+        maxCost: 250,
+      });
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty("therapists");
+      expect(Array.isArray(response.body.therapists)).toBe(true);
+      response.body.therapists.forEach((therapist: any) => {
+        expect(therapist).toHaveProperty("mediumCost");
+        expect(therapist.mediumCost).toBe(newTherapist.mediumCost);
+        expect(therapist.name).toBe("Update Therapist Test");
+      });
+    });
+  });
+
+  describe("Search Controller - Get Therapist By Id", () => {
+    it("should return a therapist filtered by id", async () => {
+      const response = await request(app).get(
+        `${searchApi.searchById}${therapistId}`
+      );
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty("email");
+      expect(response.body.email).toBe(newTherapist.email);
     });
   });
 });

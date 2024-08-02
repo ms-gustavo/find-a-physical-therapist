@@ -51,6 +51,19 @@ export const newTherapist = {
   inscriptionNumber: "123456",
 };
 
+export const newQueryTherapist = {
+  name: "Therapist Search By Query Test",
+  email: "newquerytherapist@example.com",
+  password: "password123",
+  mediumCost: 300,
+  speciality: ["Speciality 1", "Speciality 2", "Speciality Test"],
+  location: {
+    type: "Point",
+    coordinates: [0, 0],
+  },
+  inscriptionNumber: "123456",
+};
+
 export const therapistInvalidEmailAddress = {
   name: "New Therapist",
   email: "new therapist@example.com",
@@ -70,9 +83,14 @@ export const userMessages = {
   invalidCredentials: "E-mail ou senha inválidos",
 };
 
+export const usersApi = {
+  profile: "/api/users/profile",
+};
+
 export const clientApi = {
   register: "/api/auth/client/register",
   login: "/api/auth/client/login",
+  profile: "/api/users/client/profile",
 };
 
 export const clientMessages = {
@@ -87,6 +105,14 @@ export const clientMessages = {
 export const therapistApi = {
   register: "/api/auth/therapist/register",
   login: "/api/auth/therapist/login",
+  profile: "/api/users/therapist/profile",
+};
+
+export const searchApi = {
+  getAllTherapists: "/api/search/getalltherapists",
+  searchByName: "/api/search/therapistbyname",
+  searchByQuery: "/api/search/therapists",
+  searchById: "/api/search/therapist/",
 };
 
 export const therapistMessages = {

@@ -50,7 +50,7 @@ export const searchTherapistsByQuery = async (req: Request, res: Response) => {
     const query: any = {};
 
     if (speciality) {
-      query.speciality = speciality;
+      query.speciality = { $in: [speciality] };
     }
 
     if (minCost || maxCost) {
@@ -69,7 +69,6 @@ export const searchTherapistsByQuery = async (req: Request, res: Response) => {
         },
       };
     }
-
     const therapists = await Therapist.find(query).select("-password");
     res.status(200).json({ therapists });
   } catch (error: any) {
