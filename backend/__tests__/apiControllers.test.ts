@@ -19,6 +19,9 @@ import Client from "../src/models/Client";
 import { findUser } from "../src/utils/userExists";
 import Therapist from "../src/models/Therapist";
 
+let clientToken: string;
+let therapistToken: string;
+
 function removeKey(
   obj: {
     [x: string]: any;
@@ -39,7 +42,7 @@ describe("Auth Controller", () => {
       const response = await request(app)
         .post(clientApi.register)
         .send(newClient);
-
+      clientToken = response.body.token;
       expect(response.status).toBe(201);
       expect(response.body).toHaveProperty("token");
     });
@@ -120,7 +123,7 @@ describe("Auth Controller", () => {
       const response = await request(app)
         .post(therapistApi.register)
         .send(newTherapist);
-
+      therapistToken = response.body.token;
       expect(response.status).toBe(201);
       expect(response.body).toHaveProperty("token");
     });
@@ -396,6 +399,82 @@ describe("Auth Controller", () => {
       expect(response.status).toBe(400);
       expect(response.body).toHaveProperty("message");
       expect(response.body.message).toBe(therapistMessages.passwordIsRequired);
+    });
+  });
+});
+
+describe("User Controller - Profile", () => {
+  describe("User Controller - Client Profile", () => {
+    it("should return user data when requesting user info with a valid token", async () => {
+      const response = await request(app)
+        .get("/api/users/profile")
+        .set("Authorization", `Bearer ${clientToken}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body.type).toBe("Client");
+    });
+
+    it("should return an error when requesting user info with a invalid token", async () => {
+      const response = await request(app)
+        .get("/api/users/profile")
+        .set("Authorization", `Bearer invalidToken`);
+
+      expect(response.status).toBe(401);
+      expect(response.body).toHaveProperty("message");
+      expect(response.body.message).toBe("Token inválido");
+    });
+
+    it("should update client informations", async () => {
+      const response = await request(app)
+        .put("/api/users/client/profile")
+        .set("Authorization", `Bearer ${clientToken}`)
+        .send({
+          name: "Update Client Test",
+        });
+
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty("updatedUser");
+      expect(response.body.updatedUser).toHaveProperty(
+        "name",
+        "Update Client Test"
+      );
+    });
+  });
+
+  describe("User Controller - Therapist Profile", () => {
+    it("should return therapist data when requesting user info with a valid token", async () => {
+      const response = await request(app)
+        .get("/api/users/profile")
+        .set("Authorization", `Bearer ${therapistToken}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body.type).toBe("Therapist");
+    });
+
+    it("should return an error when requesting user info with a invalid token", async () => {
+      const response = await request(app)
+        .get("/api/users/profile")
+        .set("Authorization", `Bearer invalidToken`);
+
+      expect(response.status).toBe(401);
+      expect(response.body).toHaveProperty("message");
+      expect(response.body.message).toBe("Token inválido");
+    });
+
+    it("should update therapist informations", async () => {
+      const response = await request(app)
+        .put("/api/users/therapist/profile")
+        .set("Authorization", `Bearer ${therapistToken}`)
+        .send({
+          name: "Update Therapist Test",
+        });
+
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty("updatedUser");
+      expect(response.body.updatedUser).toHaveProperty(
+        "name",
+        "Update Therapist Test"
+      );
     });
   });
 });

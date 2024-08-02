@@ -26,10 +26,5 @@ afterAll(async () => {
   await mongoose.connection.close().then(() => {
     console.log(`Disconnected from MongoDB ${env}`);
   });
-  await new Promise<void>((resolve) => {
-    server.close(() => {
-      console.log(`Test server closed`);
-      resolve();
-    });
-  });
+  server.close();
 });
