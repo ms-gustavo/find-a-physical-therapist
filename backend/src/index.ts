@@ -8,12 +8,11 @@ import consultRoutes from "./routes/consultRoutes";
 import reviewRoutes from "./routes/reviewRoutes";
 dotenv.config();
 
-const env = process.env.NODE_ENV || "development";
+export const env = process.env.NODE_ENV || "development";
 const MONGO_URI =
   env === "test" ? process.env.MONGO_URI_TEST : process.env.MONGO_URI_DEV;
 
 const app = express();
-const PORT = env === "development" ? 5000 : 5050;
 
 app.use(express.json());
 app.use("/api/auth", authRoutes);
@@ -28,9 +27,6 @@ const connectionWithRetry = () => {
     .connect(MONGO_URI!)
     .then(() => {
       console.log(`Connected to MongoDB (${env})`);
-      app.listen(PORT, () => {
-        console.log(`Server running on port ${PORT}`);
-      });
     })
     .catch((error) => {
       console.error(`MongoDB connection error: ${error}`);
