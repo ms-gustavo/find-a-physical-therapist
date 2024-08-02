@@ -5,12 +5,19 @@ import {
   clientApi,
   clientInvalidEmailAddress,
   clientMessages,
+  mockClientLogin,
+  mockTherapistLogin,
   newClient,
   newTherapist,
+  nonExistentUser,
   therapistApi,
   therapistInvalidEmailAddress,
   therapistMessages,
+  userMessages,
 } from "../testsMocks/authControllerMocks";
+import Client from "../src/models/Client";
+import { findUser } from "../src/utils/userExists";
+import Therapist from "../src/models/Therapist";
 
 function removeKey(
   obj: {
@@ -226,5 +233,159 @@ describe("Auth Controller - Register new Therapist", () => {
     expect(response.body.message).toBe(
       therapistMessages.inscriptionNumberIsRequired
     );
+  });
+});
+
+describe("Auth Controller - Client Login", () => {
+  it("should return user if found Client", async () => {
+    const spy = jest
+      .spyOn(Client, "findOne")
+      .mockResolvedValue(mockClientLogin);
+    const result = await findUser("testclient@example.com", "login", "Client");
+    expect(result.status).toBe(200);
+    expect((result as any).user.email).toBe(mockClientLogin.email);
+    expect((result as any).message).toBe(userMessages.foundUser);
+    expect(spy).toHaveBeenCalledWith({ email: mockClientLogin.email });
+
+    spy.mockRestore();
+  });
+
+  it("should return an token when user login with valid credentials", async () => {
+    const response = await request(app).post(clientApi.login).send({
+      email: newClient.email,
+      password: newClient.password,
+    });
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty("token");
+  });
+
+  it("should return an validation error when user try login an nonexistent user", async () => {
+    const response = await request(app).post(clientApi.login).send({
+      email: nonExistentUser.email,
+      password: nonExistentUser.password,
+    });
+    expect(response.status).toBe(404);
+    expect(response.body).toHaveProperty("message");
+    expect(response.body.message).toBe(userMessages.userNotFound);
+  });
+
+  it("should return an validation error when user login with invalid credentials", async () => {
+    const response = await request(app)
+      .post(clientApi.login)
+      .send({
+        email: newClient.email,
+        password: newClient.password + "1",
+      });
+    expect(response.status).toBe(404);
+    expect(response.body).toHaveProperty("message");
+    expect(response.body.message).toBe(userMessages.invalidCredentials);
+  });
+
+  it("should return an validation error when user login with no email", async () => {
+    const loginWithoutEmail = removeKey(mockClientLogin, "email");
+
+    const response = await request(app).post(clientApi.login).send({
+      loginWithoutEmail,
+    });
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty("message");
+    expect(response.body.message).toBe(clientMessages.emailIsRequired);
+  });
+
+  it("should return an validation error when user login with invalid email", async () => {
+    const response = await request(app).post(clientApi.login).send({
+      email: clientInvalidEmailAddress.email,
+      password: mockClientLogin.password,
+    });
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty("message");
+    expect(response.body.message).toBe(clientMessages.emailInvalid);
+  });
+
+  it("should return an validation error when user login with with no password", async () => {
+    const response = await request(app).post(clientApi.login).send({
+      email: mockClientLogin.email,
+    });
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty("message");
+    expect(response.body.message).toBe(clientMessages.passwordIsRequired);
+  });
+});
+
+describe("Auth Controller - Therapist Login", () => {
+  it("should return user if found Therapist", async () => {
+    const spy = jest
+      .spyOn(Therapist, "findOne")
+      .mockResolvedValue(mockTherapistLogin);
+    const result = await findUser(
+      "newtherapist@example.com",
+      "login",
+      "Therapist"
+    );
+    expect(result.status).toBe(200);
+    expect((result as any).user.email).toBe(mockTherapistLogin.email);
+    expect((result as any).message).toBe(userMessages.foundUser);
+    expect(spy).toHaveBeenCalledWith({ email: mockTherapistLogin.email });
+
+    spy.mockRestore();
+  });
+
+  it("should return an token when therapist login with valid credentials", async () => {
+    const response = await request(app).post(therapistApi.login).send({
+      email: newTherapist.email,
+      password: newTherapist.password,
+    });
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty("token");
+  });
+
+  it("should return an validation error when therapist try login an nonexistent user", async () => {
+    const response = await request(app).post(therapistApi.login).send({
+      email: nonExistentUser.email,
+      password: nonExistentUser.password,
+    });
+    expect(response.status).toBe(404);
+    expect(response.body).toHaveProperty("message");
+    expect(response.body.message).toBe(userMessages.userNotFound);
+  });
+
+  it("should return an validation error when user login with invalid credentials", async () => {
+    const response = await request(app)
+      .post(therapistApi.login)
+      .send({
+        email: newTherapist.email,
+        password: newTherapist.password + "1",
+      });
+    expect(response.status).toBe(404);
+    expect(response.body).toHaveProperty("message");
+    expect(response.body.message).toBe(userMessages.invalidCredentials);
+  });
+
+  it("should return an validation error when user login with no email", async () => {
+    const response = await request(app).post(therapistApi.login).send({
+      password: newTherapist.password,
+    });
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty("message");
+    expect(response.body.message).toBe(therapistMessages.emailIsRequired);
+  });
+
+  it("should return an validation error when user login with invalid email", async () => {
+    const response = await request(app).post(therapistApi.login).send({
+      email: clientInvalidEmailAddress.email,
+      password: mockClientLogin.password,
+    });
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty("message");
+    expect(response.body.message).toBe(therapistMessages.emailInvalid);
+  });
+
+  it("should return an validation error when user login with with no password", async () => {
+    const response = await request(app).post(therapistApi.login).send({
+      email: newTherapist.email,
+    });
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty("message");
+    expect(response.body.message).toBe(therapistMessages.passwordIsRequired);
   });
 });

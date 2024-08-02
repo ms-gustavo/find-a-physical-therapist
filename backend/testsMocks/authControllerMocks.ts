@@ -8,6 +8,26 @@ export const newClient = {
   },
 };
 
+export const mockClientLogin = {
+  email: "testclient@example.com",
+  password: "password123",
+};
+
+export const mockTherapistLogin = {
+  email: "newtherapist@example.com",
+  password: "password123",
+};
+
+export const mockLoginFindUser = {
+  email: "testlogin@example.com",
+  save: jest.fn(),
+};
+
+export const nonExistentUser = {
+  email: "inexistentuser@example.com",
+  password: "123456",
+};
+
 export const clientInvalidEmailAddress = {
   name: "Test Client",
   email: "test client@example.com",
@@ -44,8 +64,15 @@ export const therapistInvalidEmailAddress = {
   inscriptionNumber: "123456",
 };
 
+export const userMessages = {
+  foundUser: "Usuário encontrado",
+  userNotFound: "Usuário não encontrado",
+  invalidCredentials: "E-mail ou senha inválidos",
+};
+
 export const clientApi = {
   register: "/api/auth/client/register",
+  login: "/api/auth/client/login",
 };
 
 export const clientMessages = {
@@ -59,6 +86,7 @@ export const clientMessages = {
 
 export const therapistApi = {
   register: "/api/auth/therapist/register",
+  login: "/api/auth/therapist/login",
 };
 
 export const therapistMessages = {

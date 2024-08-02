@@ -8,12 +8,10 @@ import Client, { IClient } from "../models/Client";
 import Therapist, { ITherapist } from "../models/Therapist";
 import { serverMessagesResponses } from "./serverMessagesResponses";
 
-type UserType = "Client" | "Therapist";
-
 export async function findUser(
   email: string,
   type: "register" | "login",
-  userType: UserType
+  userType: "Client" | "Therapist"
 ): Promise<FindUserResult> {
   const model: Model<IClient | ITherapist> =
     userType === "Client"
@@ -21,7 +19,7 @@ export async function findUser(
       : (Therapist as unknown as Model<IClient | ITherapist>);
 
   const emailToLowerCase = email.toLowerCase();
-  const user = (await model.findOne({ email: emailToLowerCase }).exec()) as
+  const user = (await model.findOne({ email: emailToLowerCase })) as
     | (IClient & Document)
     | (ITherapist & Document)
     | null;

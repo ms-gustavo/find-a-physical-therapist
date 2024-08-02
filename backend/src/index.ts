@@ -13,7 +13,7 @@ const MONGO_URI =
   env === "test" ? process.env.MONGO_URI_TEST : process.env.MONGO_URI_DEV;
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = env === "development" ? 5000 : 5050;
 
 app.use(express.json());
 app.use("/api/auth", authRoutes);

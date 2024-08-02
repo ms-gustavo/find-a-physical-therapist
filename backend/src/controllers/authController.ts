@@ -42,14 +42,12 @@ export const registerNewClient = async (req: Request, res: Response) => {
 
 export const loginClient = async (req: Request, res: Response) => {
   const { email, password }: { email: string; password: string } = req.body;
-
   try {
     const userCheck = await findUser(email, "login", "Client");
     if (userCheck.status !== 200) {
       return res.status(userCheck.status).json({ message: userCheck.message });
     }
     const user = (userCheck as FindUserSuccessResponse).user;
-
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
     if (!isPasswordCorrect) {
       return res
