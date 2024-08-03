@@ -142,3 +142,13 @@ export const reviewMessages = {
   minRating: "A avaliação mínima é 1",
   maxRating: "A avaliação máxima é 5",
 };
+
+export const consultApi = {
+  create: "/api/schedule/create",
+  getByDate: "/api/schedule/consultations",
+  getHistory: "/api/schedule/history",
+};
+
+export const consultMessages = {
+  consultAlreadyExists: "Já existe consulta agendada para esse horário",
+};

@@ -5,6 +5,8 @@ import {
   clientApi,
   clientInvalidEmailAddress,
   clientMessages,
+  consultApi,
+  consultMessages,
   createNewReview,
   mockClientLogin,
   mockTherapistLogin,
@@ -24,6 +26,8 @@ import {
 import Client from "../src/models/Client";
 import { findUser } from "../src/utils/userExists";
 import Therapist from "../src/models/Therapist";
+import { createAConsult } from "../src/controllers/consultController";
+import { formatDate } from "../src/utils/formatDate";
 
 let clientToken: string;
 let clientId: any;
@@ -686,6 +690,153 @@ describe("Review Controller", () => {
           }),
         ])
       );
+    });
+  });
+});
+
+describe("Consult Controller", () => {
+  let actualDate = new Date();
+  describe("Consult Controller - Create a Consult", () => {
+    it("should create a new consult", async () => {
+      const authenticateClientResponse = await request(app)
+        .get(usersApi.profile)
+        .set("Authorization", `Bearer ${clientToken}`);
+
+      expect(authenticateClientResponse.status).toBe(200);
+      expect(authenticateClientResponse.body.type).toBe("Client");
+
+      const findTherapistId = await request(app).get(
+        `${searchApi.searchById}${therapistId}`
+      );
+      expect(findTherapistId.status).toBe(200);
+
+      const createAConsultResponse = await request(app)
+        .post(consultApi.create)
+        .set("Authorization", `Bearer ${clientToken}`)
+        .send({
+          clientId,
+          therapistId,
+          datetime: actualDate,
+        });
+      expect(createAConsultResponse.status).toBe(201);
+      expect(createAConsultResponse.body).toHaveProperty("savedConsultation");
+      expect(createAConsultResponse.body.savedConsultation).toEqual(
+        expect.objectContaining({
+          _id: expect.any(String),
+          clientId: expect.any(String),
+          therapistId: expect.any(String),
+          date: expect.any(String),
+          time: expect.any(String),
+          status: expect.any(String),
+        })
+      );
+      expect(createAConsultResponse.body.savedConsultation.status).toBe(
+        "scheduled"
+      );
+    });
+
+    it("should return an validation error if consult already exists", async () => {
+      const authenticateClientResponse = await request(app)
+        .get(usersApi.profile)
+        .set("Authorization", `Bearer ${clientToken}`);
+
+      expect(authenticateClientResponse.status).toBe(200);
+      expect(authenticateClientResponse.body.type).toBe("Client");
+
+      const findTherapistId = await request(app).get(
+        `${searchApi.searchById}${therapistId}`
+      );
+      expect(findTherapistId.status).toBe(200);
+
+      const createAConsultResponse = await request(app)
+        .post(consultApi.create)
+        .set("Authorization", `Bearer ${clientToken}`)
+        .send({
+          clientId,
+          therapistId,
+          datetime: actualDate,
+        });
+      expect(createAConsultResponse.status).toBe(409);
+      expect(createAConsultResponse.body).toHaveProperty("message");
+      expect(createAConsultResponse.body.message).toBe(
+        consultMessages.consultAlreadyExists
+      );
+    });
+  });
+
+  describe("Consult Controller - Get Consult By Date", () => {
+    it("should return all consults in provided date", async () => {
+      const authenticateClientResponse = await request(app)
+        .get(usersApi.profile)
+        .set("Authorization", `Bearer ${therapistToken}`);
+
+      expect(authenticateClientResponse.status).toBe(200);
+      expect(authenticateClientResponse.body.type).toBe("Therapist");
+
+      const { date } = formatDate(actualDate);
+
+      const getConsultByDateResponse = await request(app)
+        .get(consultApi.getByDate)
+        .set("Authorization", `Bearer ${therapistToken}`)
+        .query({
+          therapistId: therapistId,
+          date: date,
+        });
+
+      expect(getConsultByDateResponse.status).toBe(200);
+      expect(getConsultByDateResponse.body).toHaveProperty("consultations");
+      expect(Array.isArray(getConsultByDateResponse.body.consultations)).toBe(
+        true
+      );
+      expect(
+        getConsultByDateResponse.body.consultations.length
+      ).toBeGreaterThanOrEqual(1);
+      expect(getConsultByDateResponse.body.consultations).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            _id: expect.any(String),
+            clientId: expect.any(String),
+            therapistId: expect.any(String),
+            date: expect.any(String),
+            time: expect.any(String),
+            status: expect.any(String),
+          }),
+        ])
+      );
+    });
+  });
+
+  describe("Consult Controller - Get Client Consult History", () => {
+    it("should return all consults from a client", async () => {
+      const authenticateClientResponse = await request(app)
+        .get(usersApi.profile)
+        .set("Authorization", `Bearer ${clientToken}`);
+
+      expect(authenticateClientResponse.status).toBe(200);
+      expect(authenticateClientResponse.body.type).toBe("Client");
+
+      const getConsultHistoryResponse = await request(app)
+        .get(consultApi.getHistory)
+        .set("Authorization", `Bearer ${clientToken}`);
+
+      expect(getConsultHistoryResponse.status).toBe(200);
+      expect(getConsultHistoryResponse.body).toHaveProperty("consultations");
+      expect(Array.isArray(getConsultHistoryResponse.body.consultations)).toBe(
+        true
+      );
+      expect(getConsultHistoryResponse.body.consultations).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            _id: expect.any(String),
+            clientId: expect.any(String),
+            therapistId: expect.any(Object),
+            date: expect.any(String),
+            time: expect.any(String),
+            status: expect.any(String),
+          }),
+        ])
+      );
+      console.log(getConsultHistoryResponse.body.consultations.therapistId);
     });
   });
 });

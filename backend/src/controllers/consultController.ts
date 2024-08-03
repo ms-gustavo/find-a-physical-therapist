@@ -34,7 +34,7 @@ export const createAConsult = async (
       time,
     });
     const savedConsultation = await newConsultation.save();
-    res.status(201).json(savedConsultation);
+    res.status(201).json({ savedConsultation });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
@@ -58,7 +58,7 @@ export const getConsultationsByDate = async (
       date,
     });
 
-    res.status(200).json(consultations);
+    res.status(200).json({ consultations });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
@@ -72,7 +72,7 @@ export const getConsultHistory = async (
     const consultations = await Consultation.find({
       clientId: req.user!._id,
     }).populate("therapistId", "name");
-    res.status(200).json(consultations);
+    res.status(200).json({ consultations });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
