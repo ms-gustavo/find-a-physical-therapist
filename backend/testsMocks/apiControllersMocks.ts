@@ -126,3 +126,19 @@ export const therapistMessages = {
   locationIsRequired: "A localização é obrigatória",
   inscriptionNumberIsRequired: "O número de registro de classe é obrigatório",
 };
+
+export const createNewReview = {
+  rating: 5,
+  comment: "Create a review test",
+};
+
+export const reviewApi = {
+  create: "/api/review/create",
+  getReviews: "/api/review/",
+};
+
+export const reviewMessages = {
+  ratingIsRequired: "A classificação é obrigatória",
+  minRating: "A avaliação mínima é 1",
+  maxRating: "A avaliação máxima é 5",
+};
