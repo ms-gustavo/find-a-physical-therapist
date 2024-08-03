@@ -36,7 +36,7 @@ export const getIndividualReview = async (req: Request, res: Response) => {
       "clientId",
       "name"
     );
-    res.status(200).json(reviews);
+    res.status(200).json({ reviews });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }

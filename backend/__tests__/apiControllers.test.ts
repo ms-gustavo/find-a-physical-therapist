@@ -23,6 +23,7 @@ import { findUser } from "../src/utils/userExists";
 import Therapist from "../src/models/Therapist";
 
 let clientToken: string;
+let clientId: any;
 let therapistToken: string;
 let therapistId: any;
 
@@ -47,6 +48,7 @@ describe("Auth Controller", () => {
         .post(clientApi.register)
         .send(newClient);
       clientToken = response.body.token;
+      clientId = response.body.id;
       expect(response.status).toBe(201);
       expect(response.body).toHaveProperty("token");
     });
@@ -564,6 +566,123 @@ describe("Search Controller", () => {
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty("email");
       expect(response.body.email).toBe(newTherapist.email);
+    });
+  });
+});
+
+describe("Review Controller", () => {
+  describe("Review Controller - Create a review", () => {
+    it("should create a new review", async () => {
+      const authenticateClientResponse = await request(app)
+        .get(usersApi.profile)
+        .set("Authorization", `Bearer ${clientToken}`);
+
+      expect(authenticateClientResponse.status).toBe(200);
+      expect(authenticateClientResponse.body.type).toBe("Client");
+
+      const findTherapistId = await request(app).get(
+        `${searchApi.searchById}${therapistId}`
+      );
+      expect(findTherapistId.status).toBe(200);
+
+      const createAReviewResponse = await request(app)
+        .post("/api/review/create")
+        .set("Authorization", `Bearer ${clientToken}`)
+        .send({
+          clientId: clientId,
+          therapistId: therapistId,
+          rating: 5,
+          comment: "Create a review test",
+        });
+
+      expect(createAReviewResponse.status).toBe(201);
+      expect(createAReviewResponse.body).toHaveProperty("rating");
+      expect(createAReviewResponse.body.rating).toBe(5);
+      expect(createAReviewResponse.body).toHaveProperty("comment");
+      expect(createAReviewResponse.body.comment).toBe("Create a review test");
+    });
+
+    it("should return a validation error if is missing rating or rating < 1 and > 5", async () => {
+      const authenticateClientResponse = await request(app)
+        .get(usersApi.profile)
+        .set("Authorization", `Bearer ${clientToken}`);
+
+      expect(authenticateClientResponse.status).toBe(200);
+      expect(authenticateClientResponse.body.type).toBe("Client");
+
+      const findTherapistId = await request(app).get(
+        `${searchApi.searchById}${therapistId}`
+      );
+      expect(findTherapistId.status).toBe(200);
+
+      const createAReviewResponseWithoutRating = await request(app)
+        .post("/api/review/create")
+        .set("Authorization", `Bearer ${clientToken}`)
+        .send({
+          clientId: clientId,
+          therapistId: therapistId,
+          comment: "Create a review test",
+        });
+      expect(createAReviewResponseWithoutRating.status).toBe(400);
+      expect(createAReviewResponseWithoutRating.body).toHaveProperty("message");
+      expect(createAReviewResponseWithoutRating.body.message).toBe(
+        `A classificação é obrigatória`
+      );
+
+      const createAReviewResponseWithRatingLowerThanOne = await request(app)
+        .post("/api/review/create")
+        .set("Authorization", `Bearer ${clientToken}`)
+        .send({
+          clientId: clientId,
+          therapistId: therapistId,
+          rating: 0,
+        });
+      expect(createAReviewResponseWithRatingLowerThanOne.status).toBe(400);
+      expect(createAReviewResponseWithRatingLowerThanOne.body).toHaveProperty(
+        "message"
+      );
+      expect(createAReviewResponseWithRatingLowerThanOne.body.message).toBe(
+        `A avaliação mínima é 1`
+      );
+
+      const createAReviewResponseWithRatingGreaterThanFive = await request(app)
+        .post("/api/review/create")
+        .set("Authorization", `Bearer ${clientToken}`)
+        .send({
+          clientId: clientId,
+          therapistId: therapistId,
+          rating: 6,
+        });
+      expect(createAReviewResponseWithRatingGreaterThanFive.status).toBe(400);
+      expect(
+        createAReviewResponseWithRatingGreaterThanFive.body
+      ).toHaveProperty("message");
+      expect(createAReviewResponseWithRatingGreaterThanFive.body.message).toBe(
+        `A avaliação máxima é 5`
+      );
+    });
+  });
+
+  describe("Review Controller - Get a review by therapistId", () => {
+    it("should return all reviews from an therapist", async () => {
+      const response = await request(app).get(`/api/review/${therapistId}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty("reviews");
+      expect(Array.isArray(response.body.reviews)).toBe(true);
+      expect(response.body.reviews).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            _id: expect.any(String),
+            clientId: expect.any(Object),
+            therapistId: expect.any(String),
+            rating: expect.any(Number),
+            comment: expect.any(String),
+            createdAt: expect.any(String),
+          }),
+        ])
+      );
+      console.log(response.body.reviews);
     });
   });
 });
