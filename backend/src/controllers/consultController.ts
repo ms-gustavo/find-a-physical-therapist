@@ -36,7 +36,10 @@ export const createAConsult = async (
     const savedConsultation = await newConsultation.save();
     res.status(201).json({ savedConsultation });
   } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    res
+      .status(500)
+      .json({ message: serverMessagesResponses.internalServerError });
+    console.error(error);
   }
 };
 
@@ -58,9 +61,18 @@ export const getConsultationsByDate = async (
       date,
     });
 
+    if (consultations.length === 0) {
+      return res
+        .status(204)
+        .json({ message: serverMessagesResponses.noConsultsFound });
+    }
+
     res.status(200).json({ consultations });
   } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    res
+      .status(500)
+      .json({ message: serverMessagesResponses.internalServerError });
+    console.error(error);
   }
 };
 
@@ -72,8 +84,17 @@ export const getConsultHistory = async (
     const consultations = await Consultation.find({
       clientId: req.user!._id,
     }).populate("therapistId", "name");
+
+    if (consultations.length === 0) {
+      return res
+        .status(204)
+        .json({ message: serverMessagesResponses.noConsultsFound });
+    }
     res.status(200).json({ consultations });
   } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    res
+      .status(500)
+      .json({ message: serverMessagesResponses.internalServerError });
+    console.error(error);
   }
 };

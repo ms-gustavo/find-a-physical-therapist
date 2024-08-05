@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { AuthenticatedRequest } from "../interfaces/interface";
 import Review from "../models/Review";
 import { clientExists, therapistExists } from "../utils/findClientOrTherapist";
+import { serverMessagesResponses } from "../utils/serverMessagesResponses";
 
 export const createAReview = async (
   req: AuthenticatedRequest,
@@ -24,7 +25,10 @@ export const createAReview = async (
     const savedReview = await newReview.save();
     res.status(201).json(savedReview);
   } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    res
+      .status(500)
+      .json({ message: serverMessagesResponses.internalServerError });
+    console.error(error);
   }
 };
 
@@ -36,8 +40,17 @@ export const getIndividualReview = async (req: Request, res: Response) => {
       "clientId",
       "name"
     );
+
+    if (reviews.length === 0) {
+      return res
+        .status(204)
+        .json({ message: serverMessagesResponses.noReviewsFound });
+    }
     res.status(200).json({ reviews });
   } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    res
+      .status(500)
+      .json({ message: serverMessagesResponses.internalServerError });
+    console.error(error);
   }
 };

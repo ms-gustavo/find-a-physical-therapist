@@ -16,16 +16,27 @@ export const getTherapistById = async (req: Request, res: Response) => {
 
     res.status(200).json(therapist);
   } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    res
+      .status(500)
+      .json({ message: serverMessagesResponses.internalServerError });
+    console.error(error);
   }
 };
 
 export const getAllTherapists = async (req: Request, res: Response) => {
   try {
     const therapists = await Therapist.find({}).select("-password");
+    if (therapists.length === 0) {
+      return res
+        .status(204)
+        .json({ message: serverMessagesResponses.noTherapists });
+    }
     res.status(200).json({ therapists });
   } catch (error: any) {
-    res.status(400).json({ message: error.message });
+    res
+      .status(500)
+      .json({ message: serverMessagesResponses.internalServerError });
+    console.error(error);
   }
 };
 
@@ -39,8 +50,18 @@ export const searchTherapistByName = async (req: Request, res: Response) => {
     }
 
     const therapists = await Therapist.find(query).select("-password");
+    if (therapists.length === 0) {
+      return res
+        .status(204)
+        .json({ message: serverMessagesResponses.noTherapists });
+    }
     res.status(200).json({ therapists });
-  } catch (error: any) {}
+  } catch (error: any) {
+    res
+      .status(500)
+      .json({ message: serverMessagesResponses.internalServerError });
+    console.error(error);
+  }
 };
 
 export const searchTherapistsByQuery = async (req: Request, res: Response) => {
@@ -70,8 +91,16 @@ export const searchTherapistsByQuery = async (req: Request, res: Response) => {
       };
     }
     const therapists = await Therapist.find(query).select("-password");
+    if (therapists.length === 0) {
+      return res
+        .status(204)
+        .json({ message: serverMessagesResponses.noTherapists });
+    }
     res.status(200).json({ therapists });
   } catch (error: any) {
-    res.status(400).json({ message: error.message });
+    res
+      .status(500)
+      .json({ message: serverMessagesResponses.internalServerError });
+    console.error(error);
   }
 };

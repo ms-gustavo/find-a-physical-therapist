@@ -25,7 +25,10 @@ export const updateClient = async (
     }
     res.status(200).json({ updatedUser });
   } catch (error: any) {
-    res.status(400).json({ message: error.message });
+    res
+      .status(500)
+      .json({ message: serverMessagesResponses.internalServerError });
+    console.error(error);
   }
 };
 
@@ -50,7 +53,10 @@ export const updateTherapist = async (
     }
     res.status(200).json({ updatedUser });
   } catch (error: any) {
-    res.status(400).json({ message: error.message });
+    res
+      .status(500)
+      .json({ message: serverMessagesResponses.internalServerError });
+    console.error(error);
   }
 };
 
@@ -70,6 +76,9 @@ export const getUserProfile = async (
 
     res.status(200).json(userResult);
   } catch (error: any) {
-    res.status(400).json({ message: error.message });
+    res
+      .status(500)
+      .json({ message: serverMessagesResponses.internalServerError });
+    console.error(error);
   }
 };

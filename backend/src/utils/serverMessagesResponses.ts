@@ -11,4 +11,8 @@ export const serverMessagesResponses = {
   therapistNotFound: "Fisioterapeuta não encontrado",
   consultAlreadyExists: "Já existe consulta agendada para esse horário",
   wrongTherapistIdOrDate: "ID do terapeuta ou data incorretos",
+  noConsultsFound: "Nenhuma consulta encontrada",
+  noReviewsFound: "Nenhuma avaliação encontrada",
+  internalServerError: "Erro interno do servidor",
+  noTherapists: "Nenhum fisioterapeuta encontrado",
 };

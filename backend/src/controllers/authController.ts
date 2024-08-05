@@ -35,7 +35,7 @@ export const registerNewClient = async (req: Request, res: Response) => {
   } catch (error) {
     res
       .status(500)
-      .json({ message: serverMessagesResponses.somethingWentWrong });
+      .json({ message: serverMessagesResponses.internalServerError });
     console.error(error);
   }
 };
@@ -68,7 +68,7 @@ export const loginClient = async (req: Request, res: Response) => {
   } catch (error) {
     res
       .status(500)
-      .json({ message: serverMessagesResponses.somethingWentWrong });
+      .json({ message: serverMessagesResponses.internalServerError });
     console.error(error);
   }
 };
@@ -122,7 +122,7 @@ export const registerNewTherapist = async (req: Request, res: Response) => {
   } catch (error) {
     res
       .status(500)
-      .json({ message: serverMessagesResponses.somethingWentWrong });
+      .json({ message: serverMessagesResponses.internalServerError });
     console.error(error);
   }
 };
@@ -170,7 +170,7 @@ export const loginTherapist = async (req: Request, res: Response) => {
   } catch (error) {
     res
       .status(500)
-      .json({ message: serverMessagesResponses.somethingWentWrong });
+      .json({ message: serverMessagesResponses.internalServerError });
     console.error(error);
   }
 };
