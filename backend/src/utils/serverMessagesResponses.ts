@@ -15,4 +15,5 @@ export const serverMessagesResponses = {
   noReviewsFound: "Nenhuma avaliação encontrada",
   internalServerError: "Erro interno do servidor",
   noTherapists: "Nenhum fisioterapeuta encontrado",
+  userDeleted: "Usuário deletado",
 };

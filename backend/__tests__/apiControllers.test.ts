@@ -8,6 +8,7 @@ import {
   consultApi,
   consultMessages,
   createNewReview,
+  deleteNewClient,
   mockClientLogin,
   mockTherapistLogin,
   newClient,
@@ -33,6 +34,8 @@ let clientToken: string;
 let clientId: any;
 let therapistToken: string;
 let therapistId: any;
+let deleteUserToken: any;
+let deleteUserId: any;
 
 function removeKey(
   obj: {
@@ -58,6 +61,14 @@ describe("Auth Controller", () => {
       clientId = response.body.id;
       expect(response.status).toBe(201);
       expect(response.body).toHaveProperty("token");
+
+      const deleteUser = await request(app)
+        .post(clientApi.register)
+        .send(deleteNewClient);
+      deleteUserToken = deleteUser.body.token;
+      deleteUserId = deleteUser.body.id;
+      expect(deleteUser.status).toBe(201);
+      expect(deleteUser.body).toHaveProperty("token");
     });
 
     it("should not register a client with an existing email", async () => {
@@ -517,6 +528,17 @@ describe("User Controller", () => {
       );
     });
   });
+
+  describe("User Controller - Delete User", () => {
+    it("should delete an user", async () => {
+      const authResponse = await request(app)
+        .delete(usersApi.deleteProfile)
+        .set("Authorization", `Bearer ${deleteUserToken}`);
+      expect(authResponse.status).toBe(200);
+      expect(authResponse.body).toHaveProperty("message");
+      expect(authResponse.body.message).toBe(userMessages.userDeleted);
+    });
+  });
 });
 
 describe("Search Controller", () => {
@@ -545,7 +567,6 @@ describe("Search Controller", () => {
     it("should return 204 No Content when there are no therapists", async () => {
       const findSpy = jest.spyOn(Therapist, "find").mockResolvedValueOnce([]);
       const response = await request(app).get(searchApi.getAllTherapists);
-      console.log("RESPONSE >>", response);
       expect(response.status).toBe(204);
 
       findSpy.mockRestore();

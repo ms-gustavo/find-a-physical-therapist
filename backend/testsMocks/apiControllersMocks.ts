@@ -8,6 +8,16 @@ export const newClient = {
   },
 };
 
+export const deleteNewClient = {
+  name: "Test Delete Client",
+  email: "deleteclient@example.com",
+  password: "password123",
+  location: {
+    type: "Point",
+    coordinates: [0, 0],
+  },
+};
+
 export const mockClientLogin = {
   email: "testclient@example.com",
   password: "password123",
@@ -93,10 +103,12 @@ export const userMessages = {
   foundUser: "Usuário encontrado",
   userNotFound: "Usuário não encontrado",
   invalidCredentials: "E-mail ou senha inválidos",
+  userDeleted: "Usuário deletado",
 };
 
 export const usersApi = {
   profile: "/api/users/profile",
+  deleteProfile: "/api/users/profile/delete",
 };
 
 export const clientApi = {
