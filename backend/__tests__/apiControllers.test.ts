@@ -5,6 +5,7 @@ import {
   clientApi,
   clientInvalidEmailAddress,
   clientMessages,
+  clientServerErrorData,
   consultApi,
   consultMessages,
   createNewReview,
@@ -22,6 +23,7 @@ import {
   therapistInvalidEmailAddress,
   therapistInvalidPhoneNumber,
   therapistMessages,
+  therapistServerErrorData,
   userMessages,
   usersApi,
 } from "../testsMocks/apiControllersMocks";
@@ -69,6 +71,20 @@ describe("Auth Controller", () => {
       deleteUserId = deleteUser.body.id;
       expect(deleteUser.status).toBe(201);
       expect(deleteUser.body).toHaveProperty("token");
+    });
+
+    it("should handle errors when saving a new client", async () => {
+      const findSpy = jest
+        .spyOn(Client.prototype, "save")
+        .mockRejectedValue(new Error(userMessages.internalServerError));
+      const response = await request(app)
+        .post(clientApi.register)
+        .send(clientServerErrorData);
+      expect(response.status).toBe(500);
+      expect(response.body).toHaveProperty("message");
+      expect(response.body.message).toBe(userMessages.internalServerError);
+
+      findSpy.mockRestore();
     });
 
     it("should not register a client with an existing email", async () => {
@@ -151,6 +167,20 @@ describe("Auth Controller", () => {
       therapistId = response.body.therapist.id;
       expect(response.status).toBe(201);
       expect(response.body).toHaveProperty("token");
+    });
+
+    it("should handle errors when saving a new therapist", async () => {
+      const findSpy = jest
+        .spyOn(Therapist.prototype, "save")
+        .mockRejectedValue(new Error(userMessages.internalServerError));
+      const response = await request(app)
+        .post(therapistApi.register)
+        .send(therapistServerErrorData);
+      expect(response.status).toBe(500);
+      expect(response.body).toHaveProperty("message");
+      expect(response.body.message).toBe(userMessages.internalServerError);
+
+      findSpy.mockRestore();
     });
 
     it("should not register a therapist with an existing email", async () => {
@@ -322,6 +352,21 @@ describe("Auth Controller", () => {
       expect(response.body).toHaveProperty("token");
     });
 
+    it("should handle errors when login client", async () => {
+      const findSpy = jest
+        .spyOn(Client, "findOne")
+        .mockRejectedValue(new Error(userMessages.internalServerError));
+      const response = await request(app).post(clientApi.login).send({
+        email: newClient.email,
+        password: newClient.password,
+      });
+      expect(response.status).toBe(500);
+      expect(response.body).toHaveProperty("message");
+      expect(response.body.message).toBe(userMessages.internalServerError);
+
+      findSpy.mockRestore();
+    });
+
     it("should return an validation error when user try login an nonexistent user", async () => {
       const response = await request(app).post(clientApi.login).send({
         email: nonExistentUser.email,
@@ -391,6 +436,41 @@ describe("Auth Controller", () => {
       expect(spy).toHaveBeenCalledWith({ email: mockTherapistLogin.email });
 
       spy.mockRestore();
+    });
+
+    it("should handle errors when login therapist", async () => {
+      const findSpy = jest
+        .spyOn(Therapist, "findOne")
+        .mockRejectedValue(new Error(userMessages.internalServerError));
+      const response = await request(app).post(therapistApi.login).send({
+        email: newTherapist.email,
+        password: newTherapist.password,
+      });
+      expect(response.status).toBe(500);
+      expect(response.body).toHaveProperty("message");
+      expect(response.body.message).toBe(userMessages.internalServerError);
+
+      findSpy.mockRestore();
+    });
+
+    it("should handle error 500 if the user is not an ITherapist", async () => {
+      const findSpy = jest.spyOn(Therapist, "findOne").mockResolvedValueOnce({
+        status: 200,
+        user: {
+          email: newTherapist.email,
+          password: newTherapist.password,
+        },
+      });
+      const response = await request(app).post(therapistApi.login).send({
+        email: newTherapist.email,
+        password: newTherapist.password,
+      });
+
+      expect(response.status).toBe(500);
+      expect(response.body).toHaveProperty("message");
+      expect(response.body.message).toBe(userMessages.internalServerError);
+
+      findSpy.mockRestore;
     });
 
     it("should return an token when therapist login with valid credentials", async () => {
@@ -475,6 +555,21 @@ describe("User Controller", () => {
       expect(response.body.message).toBe("Token inválido");
     });
 
+    it("should return an error when requesting user info with a nonexistent user", async () => {
+      const findSpy = jest
+        .spyOn(Client, "findById")
+        .mockResolvedValueOnce(null);
+      const response = await request(app)
+        .get(usersApi.profile)
+        .set("Authorization", `Bearer ${clientToken}`);
+
+      expect(response.status).toBe(404);
+      expect(response.body).toHaveProperty("message");
+      expect(response.body.message).toBe("Usuário não encontrado");
+
+      findSpy.mockRestore();
+    });
+
     it("should update client informations", async () => {
       const response = await request(app)
         .put(clientApi.profile)
@@ -510,6 +605,21 @@ describe("User Controller", () => {
       expect(response.status).toBe(401);
       expect(response.body).toHaveProperty("message");
       expect(response.body.message).toBe("Token inválido");
+    });
+
+    it("should return an error when requesting user info with a nonexistent user", async () => {
+      const findSpy = jest
+        .spyOn(Therapist, "findById")
+        .mockResolvedValueOnce(null);
+      const response = await request(app)
+        .get(usersApi.profile)
+        .set("Authorization", `Bearer ${therapistToken}`);
+
+      expect(response.status).toBe(404);
+      expect(response.body).toHaveProperty("message");
+      expect(response.body.message).toBe("Usuário não encontrado");
+
+      findSpy.mockRestore();
     });
 
     it("should update therapist informations", async () => {

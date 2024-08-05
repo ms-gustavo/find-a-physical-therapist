@@ -139,8 +139,8 @@ export const loginTherapist = async (req: Request, res: Response) => {
 
     if (!isTherapist(therapist)) {
       return res
-        .status(404)
-        .json({ message: serverMessagesResponses.invalidCredentials });
+        .status(500)
+        .json({ message: serverMessagesResponses.internalServerError });
     }
 
     const isPasswordCorrect = await bcrypt.compare(

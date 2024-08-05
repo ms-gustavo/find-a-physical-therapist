@@ -8,6 +8,13 @@ export const newClient = {
   },
 };
 
+export const clientServerErrorData = {
+  name: "John Doe",
+  email: "john.doe@example.com",
+  password: "securepassword",
+  location: { type: "Point", coordinates: [0, 0] },
+};
+
 export const deleteNewClient = {
   name: "Test Delete Client",
   email: "deleteclient@example.com",
@@ -46,6 +53,20 @@ export const clientInvalidEmailAddress = {
 export const newTherapist = {
   name: "New Therapist",
   email: "newtherapist@example.com",
+  password: "password123",
+  phoneNumber: "71912341234",
+  mediumCost: 130,
+  speciality: ["Speciality 1", "Speciality 2"],
+  location: {
+    type: "Point",
+    coordinates: [0, 0],
+  },
+  inscriptionNumber: "123456",
+};
+
+export const therapistServerErrorData = {
+  name: "New Therapist",
+  email: "therapistservererrordata@example.com",
   password: "password123",
   phoneNumber: "71912341234",
   mediumCost: 130,
@@ -104,6 +125,7 @@ export const userMessages = {
   userNotFound: "Usuário não encontrado",
   invalidCredentials: "E-mail ou senha inválidos",
   userDeleted: "Usuário deletado",
+  internalServerError: "Erro interno do servidor",
 };
 
 export const usersApi = {
