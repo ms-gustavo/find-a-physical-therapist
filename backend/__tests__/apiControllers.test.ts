@@ -31,6 +31,8 @@ import Client from "../src/models/Client";
 import { findUser } from "../src/utils/userExists";
 import Therapist from "../src/models/Therapist";
 import { formatDate } from "../src/utils/formatDate";
+import Consultation, { IConsultation } from "../src/models/Consultation";
+import { Query } from "mongoose";
 
 let clientToken: string;
 let clientId: any;
@@ -945,6 +947,29 @@ describe("Consult Controller", () => {
         consultMessages.consultAlreadyExists
       );
     });
+
+    it("should return internal server error if there is an error saving the consult", async () => {
+      const findSpy = jest
+        .spyOn(Consultation.prototype, "save")
+        .mockRejectedValue(new Error(userMessages.internalServerError));
+
+      const anotherDate = new Date();
+
+      const response = await request(app)
+        .post(consultApi.create)
+        .set("Authorization", `Bearer ${clientToken}`)
+        .send({
+          clientId,
+          therapistId,
+          datetime: anotherDate,
+        });
+      console.log(response.body);
+      expect(response.status).toBe(500);
+      expect(response.body).toHaveProperty("message");
+      expect(response.body.message).toBe(userMessages.internalServerError);
+
+      findSpy.mockRestore();
+    });
   });
 
   describe("Consult Controller - Get Consult By Date", () => {
@@ -965,7 +990,7 @@ describe("Consult Controller", () => {
           therapistId: therapistId,
           date: date,
         });
-
+      console.log(getConsultByDateResponse);
       expect(getConsultByDateResponse.status).toBe(200);
       expect(getConsultByDateResponse.body).toHaveProperty("consultations");
       expect(Array.isArray(getConsultByDateResponse.body.consultations)).toBe(
@@ -986,6 +1011,86 @@ describe("Consult Controller", () => {
           }),
         ])
       );
+    });
+
+    it("should return validator errors if therapistId or Date is missing", async () => {
+      const authenticateClientResponse = await request(app)
+        .get(usersApi.profile)
+        .set("Authorization", `Bearer ${therapistToken}`);
+
+      expect(authenticateClientResponse.status).toBe(200);
+      expect(authenticateClientResponse.body.type).toBe("Therapist");
+
+      const { date } = formatDate(actualDate);
+
+      const getConsultWithoutTherapistIdResponse = await request(app)
+        .get(consultApi.getByDate)
+        .set("Authorization", `Bearer ${therapistToken}`)
+        .query({
+          date: date,
+        });
+
+      expect(getConsultWithoutTherapistIdResponse.status).toBe(400);
+      expect(getConsultWithoutTherapistIdResponse.body.message).toBe(
+        "ID do terapeuta ou data incorretos"
+      );
+
+      const getConsultWithoutDateResponse = await request(app)
+        .get(consultApi.getByDate)
+        .set("Authorization", `Bearer ${therapistToken}`)
+        .query({
+          therapistId: therapistId,
+        });
+
+      expect(getConsultWithoutDateResponse.status).toBe(400);
+      expect(getConsultWithoutDateResponse.body.message).toBe(
+        "ID do terapeuta ou data incorretos"
+      );
+    });
+
+    it("should return status 204 if there is no consult registereds", async () => {
+      const spy = jest.spyOn(Consultation, "find").mockResolvedValue([]);
+
+      const authenticateClientResponse = await request(app)
+        .get(usersApi.profile)
+        .set("Authorization", `Bearer ${therapistToken}`);
+
+      expect(authenticateClientResponse.status).toBe(200);
+
+      const { date } = formatDate(actualDate);
+
+      const getConsultByDateResponse = await request(app)
+        .get(consultApi.getByDate)
+        .set("Authorization", `Bearer ${therapistToken}`)
+        .query({
+          therapistId: therapistId,
+          date: date,
+        });
+
+      expect(getConsultByDateResponse.status).toBe(204);
+
+      spy.mockRestore();
+    });
+
+    it("should return internal server error if there is an error getting  consults ", async () => {
+      const findSpy = jest
+        .spyOn(Consultation, "find")
+        .mockRejectedValue(new Error(userMessages.internalServerError));
+
+      const { date } = formatDate(actualDate);
+
+      const response = await request(app)
+        .get(consultApi.getByDate)
+        .set("Authorization", `Bearer ${clientToken}`)
+        .query({
+          therapistId: therapistId,
+          date: date,
+        });
+      expect(response.status).toBe(500);
+      expect(response.body).toHaveProperty("message");
+      expect(response.body.message).toBe(userMessages.internalServerError);
+
+      findSpy.mockRestore();
     });
   });
 
@@ -1019,6 +1124,57 @@ describe("Consult Controller", () => {
           }),
         ])
       );
+    });
+
+    it("should return status 204 if there is no consult registereds", async () => {
+      const findMock = jest.spyOn(Consultation, "find").mockImplementation(
+        () =>
+          ({
+            populate: jest.fn().mockResolvedValue([]),
+          } as unknown as Query<
+            unknown[],
+            unknown,
+            {},
+            IConsultation,
+            "find",
+            {}
+          >)
+      );
+
+      const getConsultByDateResponse = await request(app)
+        .get(consultApi.getHistory)
+        .set("Authorization", `Bearer ${clientToken}`);
+
+      expect(getConsultByDateResponse.status).toBe(204);
+
+      findMock.mockRestore();
+    });
+
+    it("should return internal server error if there is an error getting consult history ", async () => {
+      const findMock = jest.spyOn(Consultation, "find").mockImplementation(
+        () =>
+          ({
+            populate: jest
+              .fn()
+              .mockRejectedValue(new Error(userMessages.internalServerError)),
+          } as unknown as Query<
+            unknown[],
+            unknown,
+            {},
+            IConsultation,
+            "find",
+            {}
+          >)
+      );
+      const response = await request(app)
+        .get(consultApi.getHistory)
+        .set("Authorization", `Bearer ${clientToken}`);
+
+      expect(response.status).toBe(500);
+      expect(response.body).toHaveProperty("message");
+      expect(response.body.message).toBe(userMessages.internalServerError);
+
+      findMock.mockRestore();
     });
   });
 });

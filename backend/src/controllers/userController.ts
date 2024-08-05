@@ -30,7 +30,7 @@ export const updateClient = async (
     res
       .status(500)
       .json({ message: serverMessagesResponses.internalServerError });
-    console.error(error);
+    console.error(error.message);
   }
 };
 
@@ -58,7 +58,7 @@ export const updateTherapist = async (
     res
       .status(500)
       .json({ message: serverMessagesResponses.internalServerError });
-    console.error(error);
+    console.error(error.message);
   }
 };
 
@@ -81,7 +81,7 @@ export const getUserProfile = async (
     res
       .status(500)
       .json({ message: serverMessagesResponses.internalServerError });
-    console.error(error);
+    console.error(error.message);
   }
 };
 
@@ -111,6 +111,6 @@ export const deleteUserProfile = async (
     res
       .status(500)
       .json({ message: serverMessagesResponses.internalServerError });
-    console.error(error);
+    console.error(error.message);
   }
 };

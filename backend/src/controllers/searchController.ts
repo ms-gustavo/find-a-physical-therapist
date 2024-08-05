@@ -19,7 +19,7 @@ export const getTherapistById = async (req: Request, res: Response) => {
     res
       .status(500)
       .json({ message: serverMessagesResponses.internalServerError });
-    console.error(error);
+    console.error(error.message);
   }
 };
 
@@ -40,7 +40,7 @@ export const getAllTherapists = async (req: Request, res: Response) => {
     res
       .status(500)
       .json({ message: serverMessagesResponses.internalServerError });
-    console.error(error);
+    console.error(error.message);
   }
 };
 
@@ -68,7 +68,7 @@ export const searchTherapistByName = async (req: Request, res: Response) => {
     res
       .status(500)
       .json({ message: serverMessagesResponses.internalServerError });
-    console.error(error);
+    console.error(error.message);
   }
 };
 
@@ -113,6 +113,6 @@ export const searchTherapistsByQuery = async (req: Request, res: Response) => {
     res
       .status(500)
       .json({ message: serverMessagesResponses.internalServerError });
-    console.error(error);
+    console.error(error.message);
   }
 };

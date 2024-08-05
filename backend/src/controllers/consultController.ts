@@ -39,7 +39,7 @@ export const createAConsult = async (
     res
       .status(500)
       .json({ message: serverMessagesResponses.internalServerError });
-    console.error(error);
+    console.error(error.message);
   }
 };
 
@@ -55,16 +55,13 @@ export const getConsultationsByDate = async (
         .status(400)
         .json({ message: serverMessagesResponses.wrongTherapistIdOrDate });
     }
-
     const consultations = await Consultation.find({
       therapistId,
       date,
     });
 
     if (consultations.length === 0) {
-      return res
-        .status(204)
-        .json({ message: serverMessagesResponses.noConsultsFound });
+      return res.status(204).json();
     }
 
     res.status(200).json({ consultations });
@@ -72,7 +69,7 @@ export const getConsultationsByDate = async (
     res
       .status(500)
       .json({ message: serverMessagesResponses.internalServerError });
-    console.error(error);
+    console.error(error.message);
   }
 };
 

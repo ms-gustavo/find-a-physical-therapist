@@ -7,6 +7,7 @@ import { FindUserSuccessResponse } from "../interfaces/interface";
 import { serverMessagesResponses } from "../utils/serverMessagesResponses";
 import Therapist, { ITherapist } from "../models/Therapist";
 import { isTherapist } from "../utils/typeGuards";
+import { AnyArray } from "mongoose";
 
 export const registerNewClient = async (req: Request, res: Response) => {
   const { name, email, password, location }: IClient = req.body;
@@ -32,11 +33,11 @@ export const registerNewClient = async (req: Request, res: Response) => {
       token,
       user: { id: newUser._id, name, email, location },
     });
-  } catch (error) {
+  } catch (error: any) {
     res
       .status(500)
       .json({ message: serverMessagesResponses.internalServerError });
-    console.error(error);
+    console.error(error.message);
   }
 };
 
@@ -65,11 +66,11 @@ export const loginClient = async (req: Request, res: Response) => {
         location: user.location,
       },
     });
-  } catch (error) {
+  } catch (error: any) {
     res
       .status(500)
       .json({ message: serverMessagesResponses.internalServerError });
-    console.error(error);
+    console.error(error.message);
   }
 };
 
@@ -119,11 +120,11 @@ export const registerNewTherapist = async (req: Request, res: Response) => {
         inscriptionNumber,
       },
     });
-  } catch (error) {
+  } catch (error: any) {
     res
       .status(500)
       .json({ message: serverMessagesResponses.internalServerError });
-    console.error(error);
+    console.error(error.message);
   }
 };
 
@@ -167,10 +168,10 @@ export const loginTherapist = async (req: Request, res: Response) => {
         inscriptionNumber: therapist.inscriptionNumber,
       },
     });
-  } catch (error) {
+  } catch (error: any) {
     res
       .status(500)
       .json({ message: serverMessagesResponses.internalServerError });
-    console.error(error);
+    console.error(error.message);
   }
 };

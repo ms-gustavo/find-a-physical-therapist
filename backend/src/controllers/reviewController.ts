@@ -28,7 +28,7 @@ export const createAReview = async (
     res
       .status(500)
       .json({ message: serverMessagesResponses.internalServerError });
-    console.error(error);
+    console.error(error.message);
   }
 };
 
@@ -51,6 +51,6 @@ export const getIndividualReview = async (req: Request, res: Response) => {
     res
       .status(500)
       .json({ message: serverMessagesResponses.internalServerError });
-    console.error(error);
+    console.error(error.message);
   }
 };
