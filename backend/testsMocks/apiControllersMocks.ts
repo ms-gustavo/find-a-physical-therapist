@@ -18,11 +18,6 @@ export const mockTherapistLogin = {
   password: "password123",
 };
 
-export const mockLoginFindUser = {
-  email: "testlogin@example.com",
-  save: jest.fn(),
-};
-
 export const nonExistentUser = {
   email: "inexistentuser@example.com",
   password: "123456",
@@ -144,6 +139,7 @@ export const therapistMessages = {
   specialityIsRequired: "A especialidade é obrigatória",
   locationIsRequired: "A localização é obrigatória",
   inscriptionNumberIsRequired: "O número de registro de classe é obrigatório",
+  therapistsNotFound: "Nenhum fisioterapeuta encontrado",
 };
 
 export const createNewReview = {

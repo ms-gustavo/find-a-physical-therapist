@@ -541,6 +541,15 @@ describe("Search Controller", () => {
         ])
       );
     });
+
+    it("should return 204 No Content when there are no therapists", async () => {
+      const findSpy = jest.spyOn(Therapist, "find").mockResolvedValueOnce([]);
+      const response = await request(app).get(searchApi.getAllTherapists);
+      console.log("RESPONSE >>", response);
+      expect(response.status).toBe(204);
+
+      findSpy.mockRestore();
+    });
   });
 
   describe("Search Controller - Get Therapist By Name", () => {
@@ -557,6 +566,14 @@ describe("Search Controller", () => {
         expect(therapist).toHaveProperty("name");
         expect(therapist.name).toContain("Therapist");
       });
+    });
+
+    it("should return 204 No Content when there are no therapists", async () => {
+      const findSpy = jest.spyOn(Therapist, "find").mockResolvedValueOnce([]);
+      const response = await request(app).get(searchApi.searchByName);
+      expect(response.status).toBe(204);
+
+      findSpy.mockRestore();
     });
   });
 
@@ -589,6 +606,14 @@ describe("Search Controller", () => {
         expect(therapist.mediumCost).toBe(newTherapist.mediumCost);
         expect(therapist.name).toBe("Update Therapist Test");
       });
+    });
+
+    it("should return 204 No Content when there are no therapists", async () => {
+      const findSpy = jest.spyOn(Therapist, "find").mockResolvedValueOnce([]);
+      const response = await request(app).get(searchApi.searchByQuery);
+      expect(response.status).toBe(204);
+
+      findSpy.mockRestore();
     });
   });
 

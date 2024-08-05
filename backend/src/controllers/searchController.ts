@@ -25,13 +25,17 @@ export const getTherapistById = async (req: Request, res: Response) => {
 
 export const getAllTherapists = async (req: Request, res: Response) => {
   try {
-    const therapists = await Therapist.find({}).select("-password");
+    const therapists = await Therapist.find({});
     if (therapists.length === 0) {
-      return res
-        .status(204)
-        .json({ message: serverMessagesResponses.noTherapists });
+      return res.status(204).json();
     }
-    res.status(200).json({ therapists });
+
+    const therapistsWithoutPassword = therapists.map((therapist) => {
+      const { password, ...therapistWithoutPassword } = therapist.toObject();
+      return therapistWithoutPassword;
+    });
+
+    res.status(200).json({ therapists: therapistsWithoutPassword });
   } catch (error: any) {
     res
       .status(500)
@@ -49,13 +53,17 @@ export const searchTherapistByName = async (req: Request, res: Response) => {
       query.name = { $regex: name, $options: "i" };
     }
 
-    const therapists = await Therapist.find(query).select("-password");
+    const therapists = await Therapist.find(query);
     if (therapists.length === 0) {
-      return res
-        .status(204)
-        .json({ message: serverMessagesResponses.noTherapists });
+      return res.status(204).json();
     }
-    res.status(200).json({ therapists });
+
+    const therapistsWithoutPassword = therapists.map((therapist) => {
+      const { password, ...therapistWithoutPassword } = therapist.toObject();
+      return therapistWithoutPassword;
+    });
+
+    res.status(200).json({ therapists: therapistsWithoutPassword });
   } catch (error: any) {
     res
       .status(500)
@@ -90,13 +98,17 @@ export const searchTherapistsByQuery = async (req: Request, res: Response) => {
         },
       };
     }
-    const therapists = await Therapist.find(query).select("-password");
+    const therapists = await Therapist.find(query);
     if (therapists.length === 0) {
-      return res
-        .status(204)
-        .json({ message: serverMessagesResponses.noTherapists });
+      return res.status(204).json();
     }
-    res.status(200).json({ therapists });
+
+    const therapistsWithoutPassword = therapists.map((therapist) => {
+      const { password, ...therapistWithoutPassword } = therapist.toObject();
+      return therapistWithoutPassword;
+    });
+
+    res.status(200).json({ therapists: therapistsWithoutPassword });
   } catch (error: any) {
     res
       .status(500)
