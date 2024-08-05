@@ -42,6 +42,7 @@ export const newTherapist = {
   name: "New Therapist",
   email: "newtherapist@example.com",
   password: "password123",
+  phoneNumber: "71912341234",
   mediumCost: 130,
   speciality: ["Speciality 1", "Speciality 2"],
   location: {
@@ -55,6 +56,7 @@ export const newQueryTherapist = {
   name: "Therapist Search By Query Test",
   email: "newquerytherapist@example.com",
   password: "password123",
+  phoneNumber: "71912341234",
   mediumCost: 300,
   speciality: ["Speciality 1", "Speciality 2", "Speciality Test"],
   location: {
@@ -68,6 +70,21 @@ export const therapistInvalidEmailAddress = {
   name: "New Therapist",
   email: "new therapist@example.com",
   password: "password123",
+  phoneNumber: "71912341234",
+  mediumCost: 130,
+  speciality: ["Speciality 1", "Speciality 2"],
+  location: {
+    type: "Point",
+    coordinates: [0, 0],
+  },
+  inscriptionNumber: "123456",
+};
+
+export const therapistInvalidPhoneNumber = {
+  name: "New Therapist",
+  email: "newtherapist@example.com",
+  password: "password123",
+  phoneNumber: "719123412345",
   mediumCost: 130,
   speciality: ["Speciality 1", "Speciality 2"],
   location: {
@@ -120,6 +137,8 @@ export const therapistMessages = {
   nameIsRequired: "O nome é obrigatório",
   emailIsRequired: "Email é obrigatório",
   emailInvalid: "O email deve ser um endereço de e-mail válido",
+  phoneNumberIsRequired: "O número de telefone é obrigatório",
+  phoneNumbeMustHave11Characteres: "O número de telefone deve ter 11 dígitos",
   passwordIsRequired: "A senha é obrigatória",
   mediumCostIsRequired: "O valor médio é obrigatório",
   specialityIsRequired: "A especialidade é obrigatória",

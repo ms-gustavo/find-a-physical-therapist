@@ -19,6 +19,7 @@ import {
   searchApi,
   therapistApi,
   therapistInvalidEmailAddress,
+  therapistInvalidPhoneNumber,
   therapistMessages,
   userMessages,
   usersApi,
@@ -26,7 +27,6 @@ import {
 import Client from "../src/models/Client";
 import { findUser } from "../src/utils/userExists";
 import Therapist from "../src/models/Therapist";
-import { createAConsult } from "../src/controllers/consultController";
 import { formatDate } from "../src/utils/formatDate";
 
 let clientToken: string;
@@ -198,6 +198,32 @@ describe("Auth Controller", () => {
       expect(response.status).toBe(400);
       expect(response.body).toHaveProperty("message");
       expect(response.body.message).toBe(therapistMessages.passwordIsRequired);
+    });
+
+    it("should return validation error if phoneNumber is not provided", async () => {
+      const registerWithoutPhoneNumber = removeKey(newTherapist, "phoneNumber");
+
+      const response = await request(app)
+        .post(therapistApi.register)
+        .send(registerWithoutPhoneNumber);
+
+      expect(response.status).toBe(400);
+      expect(response.body).toHaveProperty("message");
+      expect(response.body.message).toBe(
+        therapistMessages.phoneNumberIsRequired
+      );
+    });
+
+    it("should return validation error if phoneNumber dont have 11 characteres", async () => {
+      const response = await request(app)
+        .post(therapistApi.register)
+        .send(therapistInvalidPhoneNumber);
+
+      expect(response.status).toBe(400);
+      expect(response.body).toHaveProperty("message");
+      expect(response.body.message).toBe(
+        therapistMessages.phoneNumbeMustHave11Characteres
+      );
     });
 
     it("should return validation error if mediumCost is not provided", async () => {
@@ -507,6 +533,7 @@ describe("Search Controller", () => {
             _id: expect.any(String),
             name: expect.any(String),
             email: expect.any(String),
+            phoneNumber: expect.any(String),
             mediumCost: expect.any(Number),
             speciality: expect.any(Array),
             inscriptionNumber: expect.any(String),
@@ -836,7 +863,6 @@ describe("Consult Controller", () => {
           }),
         ])
       );
-      console.log(getConsultHistoryResponse.body.consultations.therapistId);
     });
   });
 });

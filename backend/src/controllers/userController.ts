@@ -34,13 +34,13 @@ export const updateTherapist = async (
   res: Response
 ) => {
   const userId = req.user!._id;
-  const { name, speciality, mediumCost, location } = req.body;
+  const { name, speciality, mediumCost, location, phoneNumber } = req.body;
 
   try {
     const updatedUser = await getClientOrTherapistProfile({
       type: "therapist",
       userId: userId,
-      updateFields: { name, speciality, mediumCost, location },
+      updateFields: { name, speciality, mediumCost, location, phoneNumber },
     });
 
     if (!updatedUser) {

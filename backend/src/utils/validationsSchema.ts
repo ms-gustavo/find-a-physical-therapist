@@ -32,6 +32,10 @@ export const registerTherapistSchema = Joi.object({
   password: Joi.string().required().messages({
     "any.required": "A senha é obrigatória",
   }),
+  phoneNumber: Joi.string().length(11).required().messages({
+    "string.length": "O número de telefone deve ter 11 dígitos",
+    "any.required": "O número de telefone é obrigatório",
+  }),
   mediumCost: Joi.number().required().messages({
     "any.required": "O valor médio é obrigatório",
   }),

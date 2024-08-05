@@ -26,6 +26,7 @@ export interface getUserProfileProps {
   userId: string;
   updateFields: {
     name?: string;
+    phoneNumber?: string;
     mediumCost?: number;
     speciality?: string[];
     location?: {
