@@ -32,7 +32,7 @@ import { serverMessagesResponses } from "../utils/serverMessagesResponses";
 
 /**
  * @swagger
- * /reviews:
+ * /api/review/create:
  *   post:
  *     summary: Cria uma nova avaliação
  *     tags: [Reviews]
@@ -50,9 +50,69 @@ import { serverMessagesResponses } from "../utils/serverMessagesResponses";
  *             schema:
  *               $ref: '#/components/schemas/Review'
  *       404:
- *         description: Terapeuta não encontrado
+ *          description: Terapeuta não encontrado
+ *          content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Terapeuta não encontrado
  *       500:
  *         description: Erro no servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Erro interno do servidor
+ *
+ * /api/review/{therapistId}:
+ *   get:
+ *     summary: Obtém todas as avaliações de um terapeuta específico
+ *     tags: [Reviews]
+ *     parameters:
+ *       - in: path
+ *         name: therapistId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID do terapeuta
+ *     responses:
+ *       200:
+ *         description: Lista de avaliações
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 reviews:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Review'
+ *       204:
+ *         description: Nenhuma avaliação encontrada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Nenhuma avaliação encontrada
+ *       500:
+ *         description: Erro no servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Erro interno do servidor
  */
 export const createAReview = async (
   req: AuthenticatedRequest,
