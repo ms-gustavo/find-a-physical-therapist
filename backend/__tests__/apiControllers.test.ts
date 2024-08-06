@@ -10,6 +10,7 @@ import {
   consultMessages,
   createNewReview,
   deleteNewClient,
+  deleteNewTherapist,
   mockClientLogin,
   mockTherapistLogin,
   newClient,
@@ -40,7 +41,7 @@ let clientId: any;
 let therapistToken: string;
 let therapistId: any;
 let deleteUserToken: any;
-let deleteUserId: any;
+let deleteTherapistToken: any;
 
 function removeKey(
   obj: {
@@ -71,7 +72,6 @@ describe("Auth Controller", () => {
         .post(clientApi.register)
         .send(deleteNewClient);
       deleteUserToken = deleteUser.body.token;
-      deleteUserId = deleteUser.body.id;
       expect(deleteUser.status).toBe(201);
       expect(deleteUser.body).toHaveProperty("token");
     });
@@ -170,6 +170,13 @@ describe("Auth Controller", () => {
       therapistId = response.body.therapist.id;
       expect(response.status).toBe(201);
       expect(response.body).toHaveProperty("token");
+
+      const deleteUser = await request(app)
+        .post(therapistApi.register)
+        .send(deleteNewTherapist);
+      deleteTherapistToken = deleteUser.body.token;
+      expect(deleteUser.status).toBe(201);
+      expect(deleteUser.body).toHaveProperty("token");
     });
 
     it("should handle errors when saving a new therapist", async () => {
@@ -573,6 +580,21 @@ describe("User Controller", () => {
       findSpy.mockRestore();
     });
 
+    it("should handle errors and return error 500 when trying to request user info", async () => {
+      const spyMock = jest
+        .spyOn(Client, "findById")
+        .mockRejectedValue(new Error(userMessages.internalServerError));
+
+      const response = await request(app)
+        .get(usersApi.profile)
+        .set("Authorization", `Bearer ${clientToken}`);
+
+      expect(response.status).toBe(500);
+      expect(response.body.message).toBe(userMessages.internalServerError);
+
+      spyMock.mockRestore();
+    });
+
     it("should update client informations", async () => {
       const response = await request(app)
         .put(clientApi.profile)
@@ -587,6 +609,68 @@ describe("User Controller", () => {
         "name",
         "Update Client Test"
       );
+    });
+
+    it("should return status 204 if user to update is not found", async () => {
+      const spyMock = jest
+        .spyOn(Client, "findByIdAndUpdate")
+        .mockImplementation(
+          () =>
+            ({
+              select: jest.fn().mockResolvedValue(null),
+            } as unknown as Query<
+              unknown,
+              unknown,
+              {},
+              ITherapist,
+              "findByIdAndUpdate",
+              {}
+            >)
+        );
+
+      const response = await request(app)
+        .put(clientApi.profile)
+        .set("Authorization", `Bearer ${clientToken}`)
+        .send({
+          name: "Update Client Test",
+        });
+
+      expect(response.status).toBe(404);
+      expect(response.body.message).toBe("Usuário não encontrado");
+
+      spyMock.mockRestore();
+    });
+
+    it("should handle errors and return error 500 when trying to update user", async () => {
+      const spyMock = jest
+        .spyOn(Client, "findByIdAndUpdate")
+        .mockImplementation(
+          () =>
+            ({
+              select: jest
+                .fn()
+                .mockRejectedValue(new Error(userMessages.internalServerError)),
+            } as unknown as Query<
+              unknown,
+              unknown,
+              {},
+              ITherapist,
+              "findByIdAndUpdate",
+              {}
+            >)
+        );
+
+      const response = await request(app)
+        .put(clientApi.profile)
+        .set("Authorization", `Bearer ${clientToken}`)
+        .send({
+          name: "Update Client Test",
+        });
+
+      expect(response.status).toBe(500);
+      expect(response.body.message).toBe(userMessages.internalServerError);
+
+      spyMock.mockRestore();
     });
   });
 
@@ -640,16 +724,132 @@ describe("User Controller", () => {
         "Update Therapist Test"
       );
     });
+
+    it("should return status 204 if user not found", async () => {
+      const spyMock = jest
+        .spyOn(Therapist, "findByIdAndUpdate")
+        .mockImplementation(
+          () =>
+            ({
+              select: jest.fn().mockResolvedValue(null),
+            } as unknown as Query<
+              unknown,
+              unknown,
+              {},
+              ITherapist,
+              "findByIdAndUpdate",
+              {}
+            >)
+        );
+
+      const response = await request(app)
+        .put(therapistApi.profile)
+        .set("Authorization", `Bearer ${therapistToken}`)
+        .send({
+          name: "Update Therapist Test",
+        });
+
+      expect(response.status).toBe(404);
+      expect(response.body.message).toBe("Usuário não encontrado");
+
+      spyMock.mockRestore();
+    });
+
+    it("should handle errors and return error 500", async () => {
+      const spyMock = jest
+        .spyOn(Therapist, "findByIdAndUpdate")
+        .mockImplementation(
+          () =>
+            ({
+              select: jest
+                .fn()
+                .mockRejectedValue(new Error(userMessages.internalServerError)),
+            } as unknown as Query<
+              unknown,
+              unknown,
+              {},
+              ITherapist,
+              "findByIdAndUpdate",
+              {}
+            >)
+        );
+
+      const response = await request(app)
+        .put(therapistApi.profile)
+        .set("Authorization", `Bearer ${therapistToken}`)
+        .send({
+          name: "Update Therapist Test",
+        });
+
+      expect(response.status).toBe(500);
+      expect(response.body.message).toBe(userMessages.internalServerError);
+
+      spyMock.mockRestore();
+    });
+
+    it("should handle errors and return error 500 when trying to request user info", async () => {
+      const spyMock = jest
+        .spyOn(Therapist, "findById")
+        .mockRejectedValue(new Error(userMessages.internalServerError));
+
+      const response = await request(app)
+        .get(usersApi.profile)
+        .set("Authorization", `Bearer ${therapistToken}`);
+
+      expect(response.status).toBe(500);
+      expect(response.body.message).toBe(userMessages.internalServerError);
+
+      spyMock.mockRestore();
+    });
   });
 
   describe("User Controller - Delete User", () => {
-    it("should delete an user", async () => {
+    it("should delete an client", async () => {
       const authResponse = await request(app)
         .delete(usersApi.deleteProfile)
         .set("Authorization", `Bearer ${deleteUserToken}`);
       expect(authResponse.status).toBe(200);
       expect(authResponse.body).toHaveProperty("message");
       expect(authResponse.body.message).toBe(userMessages.userDeleted);
+    });
+
+    it("should delete an therapist", async () => {
+      const authResponse = await request(app)
+        .delete(usersApi.deleteProfile)
+        .set("Authorization", `Bearer ${deleteTherapistToken}`);
+      expect(authResponse.status).toBe(200);
+      expect(authResponse.body).toHaveProperty("message");
+      expect(authResponse.body.message).toBe(userMessages.userDeleted);
+    });
+
+    it("should return an error when requesting user info with a nonexistent user", async () => {
+      const findSpy = jest
+        .spyOn(Client, "findById")
+        .mockResolvedValueOnce(null);
+      const response = await request(app)
+        .delete(usersApi.deleteProfile)
+        .set("Authorization", `Bearer ${clientToken}`);
+
+      expect(response.status).toBe(404);
+      expect(response.body).toHaveProperty("message");
+      expect(response.body.message).toBe("Usuário não encontrado");
+
+      findSpy.mockRestore();
+    });
+
+    it("should handle errors and return error 500 when trying to delete an user", async () => {
+      const spyMock = jest
+        .spyOn(Client, "findById")
+        .mockRejectedValue(new Error(userMessages.internalServerError));
+
+      const response = await request(app)
+        .delete(usersApi.deleteProfile)
+        .set("Authorization", `Bearer ${clientToken}`);
+
+      expect(response.status).toBe(500);
+      expect(response.body.message).toBe(userMessages.internalServerError);
+
+      spyMock.mockRestore();
     });
   });
 });

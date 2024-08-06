@@ -50,6 +50,20 @@ export const clientInvalidEmailAddress = {
   },
 };
 
+export const deleteNewTherapist = {
+  name: "New Therapist",
+  email: "deletenewtherapist@example.com",
+  password: "password123",
+  phoneNumber: "71912341234",
+  mediumCost: 130,
+  speciality: ["Speciality 1", "Speciality 2"],
+  location: {
+    type: "Point",
+    coordinates: [0, 0],
+  },
+  inscriptionNumber: "123456",
+};
+
 export const newTherapist = {
   name: "New Therapist",
   email: "newtherapist@example.com",
