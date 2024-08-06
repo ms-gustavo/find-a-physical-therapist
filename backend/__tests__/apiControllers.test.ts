@@ -764,6 +764,22 @@ describe("Search Controller", () => {
       });
     });
 
+    it("should return therapist list filtered by query 'location: [0, 0], maxDistance: 8000'", async () => {
+      const response = await request(app)
+        .get(searchApi.searchByQuery)
+        .query({
+          location: ["0, 0"],
+          maxDistance: 8000,
+        });
+
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty("therapists");
+      expect(Array.isArray(response.body.therapists)).toBe(true);
+      response.body.therapists.forEach((therapist: any) => {
+        expect(therapist).toHaveProperty("location");
+      });
+    });
+
     it("should return 204 No Content when there are no therapists", async () => {
       const findSpy = jest.spyOn(Therapist, "find").mockResolvedValueOnce([]);
       const response = await request(app).get(searchApi.searchByQuery);
