@@ -6,15 +6,15 @@ export const getTherapistById = async (req: Request, res: Response) => {
   const { therapistId } = req.params;
 
   try {
-    const therapist = await Therapist.findById(therapistId).select("-password");
+    const therapist = await Therapist.findById(therapistId).lean();
 
     if (!therapist) {
       return res
         .status(404)
         .json({ message: serverMessagesResponses.therapistNotFound });
     }
-
-    res.status(200).json(therapist);
+    const { password, ...therapistWithoutPassword } = therapist;
+    res.status(200).json(therapistWithoutPassword);
   } catch (error: any) {
     res
       .status(500)

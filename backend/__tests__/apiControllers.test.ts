@@ -29,7 +29,7 @@ import {
 } from "../testsMocks/apiControllersMocks";
 import Client from "../src/models/Client";
 import { findUser } from "../src/utils/userExists";
-import Therapist from "../src/models/Therapist";
+import Therapist, { ITherapist } from "../src/models/Therapist";
 import { formatDate } from "../src/utils/formatDate";
 import Consultation, { IConsultation } from "../src/models/Consultation";
 import { Query } from "mongoose";
@@ -684,6 +684,17 @@ describe("Search Controller", () => {
 
       findSpy.mockRestore();
     });
+
+    it("should handle errors and return 500", async () => {
+      const findSpy = jest
+        .spyOn(Therapist, "find")
+        .mockRejectedValue(new Error(userMessages.internalServerError));
+      const response = await request(app).get(searchApi.getAllTherapists);
+
+      expect(response.status).toBe(500);
+      expect(response.body.message).toBe(userMessages.internalServerError);
+      findSpy.mockRestore();
+    });
   });
 
   describe("Search Controller - Get Therapist By Name", () => {
@@ -707,6 +718,17 @@ describe("Search Controller", () => {
       const response = await request(app).get(searchApi.searchByName);
       expect(response.status).toBe(204);
 
+      findSpy.mockRestore();
+    });
+
+    it("should handle errors and return 500", async () => {
+      const findSpy = jest
+        .spyOn(Therapist, "find")
+        .mockRejectedValue(new Error(userMessages.internalServerError));
+      const response = await request(app).get(searchApi.searchByName);
+
+      expect(response.status).toBe(500);
+      expect(response.body.message).toBe(userMessages.internalServerError);
       findSpy.mockRestore();
     });
   });
@@ -749,6 +771,17 @@ describe("Search Controller", () => {
 
       findSpy.mockRestore();
     });
+
+    it("should handle errors and return 500", async () => {
+      const findSpy = jest
+        .spyOn(Therapist, "find")
+        .mockRejectedValue(new Error(userMessages.internalServerError));
+      const response = await request(app).get(searchApi.searchByQuery);
+
+      expect(response.status).toBe(500);
+      expect(response.body.message).toBe(userMessages.internalServerError);
+      findSpy.mockRestore();
+    });
   });
 
   describe("Search Controller - Get Therapist By Id", () => {
@@ -759,6 +792,54 @@ describe("Search Controller", () => {
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty("email");
       expect(response.body.email).toBe(newTherapist.email);
+    });
+
+    it("should return status 404 if therapist not found", async () => {
+      const spy = jest.spyOn(Therapist, "findById").mockImplementation(
+        () =>
+          ({
+            lean: jest.fn().mockResolvedValue(null),
+          } as unknown as Query<
+            unknown,
+            unknown,
+            {},
+            ITherapist,
+            "findById",
+            {}
+          >)
+      );
+
+      const response = await request(app).get(
+        `${searchApi.searchById}${therapistId}`
+      );
+      expect(response.status).toBe(404);
+      expect(response.body.message).toBe("Fisioterapeuta não encontrado");
+      spy.mockRestore();
+    });
+
+    it("should handle erros and return error 500", async () => {
+      const findSpy = jest.spyOn(Therapist, "findById").mockImplementation(
+        () =>
+          ({
+            lean: jest
+              .fn()
+              .mockRejectedValue(new Error(userMessages.internalServerError)),
+          } as unknown as Query<
+            unknown,
+            unknown,
+            {},
+            ITherapist,
+            "findById",
+            {}
+          >)
+      );
+
+      const response = await request(app).get(
+        `${searchApi.searchById}${therapistId}`
+      );
+      expect(response.status).toBe(500);
+      expect(response.body.message).toBe(userMessages.internalServerError);
+      findSpy.mockRestore();
     });
   });
 });
