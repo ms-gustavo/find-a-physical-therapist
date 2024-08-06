@@ -33,6 +33,7 @@ import Therapist from "../src/models/Therapist";
 import { formatDate } from "../src/utils/formatDate";
 import Consultation, { IConsultation } from "../src/models/Consultation";
 import { Query } from "mongoose";
+import Review, { IReview } from "../src/models/Review";
 
 let clientToken: string;
 let clientId: any;
@@ -793,6 +794,25 @@ describe("Review Controller", () => {
       expect(createAReviewResponse.body.comment).toBe(createNewReview.comment);
     });
 
+    it("should handle errors when saving a new review", async () => {
+      const findSpy = jest
+        .spyOn(Review.prototype, "save")
+        .mockRejectedValue(new Error(userMessages.internalServerError));
+
+      const response = await request(app)
+        .post(reviewApi.create)
+        .set("Authorization", `Bearer ${clientToken}`)
+        .send({
+          therapistId,
+          rating: 5,
+        });
+      expect(response.status).toBe(500);
+      expect(response.body).toHaveProperty("message");
+      expect(response.body.message).toBe(userMessages.internalServerError);
+
+      findSpy.mockRestore();
+    });
+
     it("should return a validation error if is missing rating or rating < 1 and > 5", async () => {
       const authenticateClientResponse = await request(app)
         .get(usersApi.profile)
@@ -875,6 +895,43 @@ describe("Review Controller", () => {
           }),
         ])
       );
+    });
+
+    it("should return a validation message if there is no review", async () => {
+      const findMock = jest.spyOn(Review, "find").mockImplementation(
+        () =>
+          ({
+            populate: jest.fn().mockResolvedValue([]),
+          } as unknown as Query<unknown[], unknown, {}, IReview, "find", {}>)
+      );
+
+      const response = await request(app).get(
+        `${reviewApi.getReviews}${therapistId}`
+      );
+
+      expect(response.status).toBe(204);
+
+      findMock.mockRestore();
+    });
+
+    it("should handle errors when searching for reviews", async () => {
+      const findMock = jest.spyOn(Review, "find").mockImplementation(
+        () =>
+          ({
+            populate: jest
+              .fn()
+              .mockRejectedValue(new Error(userMessages.internalServerError)),
+          } as unknown as Query<unknown[], unknown, {}, IReview, "find", {}>)
+      );
+
+      const response = await request(app).get(
+        `${reviewApi.getReviews}${therapistId}`
+      );
+
+      expect(response.status).toBe(500);
+      expect(response.body.message).toBe(userMessages.internalServerError);
+
+      findMock.mockRestore();
     });
   });
 });
@@ -963,7 +1020,6 @@ describe("Consult Controller", () => {
           therapistId,
           datetime: anotherDate,
         });
-      console.log(response.body);
       expect(response.status).toBe(500);
       expect(response.body).toHaveProperty("message");
       expect(response.body.message).toBe(userMessages.internalServerError);
@@ -990,7 +1046,6 @@ describe("Consult Controller", () => {
           therapistId: therapistId,
           date: date,
         });
-      console.log(getConsultByDateResponse);
       expect(getConsultByDateResponse.status).toBe(200);
       expect(getConsultByDateResponse.body).toHaveProperty("consultations");
       expect(Array.isArray(getConsultByDateResponse.body.consultations)).toBe(
@@ -1050,13 +1105,6 @@ describe("Consult Controller", () => {
 
     it("should return status 204 if there is no consult registereds", async () => {
       const spy = jest.spyOn(Consultation, "find").mockResolvedValue([]);
-
-      const authenticateClientResponse = await request(app)
-        .get(usersApi.profile)
-        .set("Authorization", `Bearer ${therapistToken}`);
-
-      expect(authenticateClientResponse.status).toBe(200);
-
       const { date } = formatDate(actualDate);
 
       const getConsultByDateResponse = await request(app)

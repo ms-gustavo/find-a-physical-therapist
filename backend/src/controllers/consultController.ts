@@ -92,6 +92,6 @@ export const getConsultHistory = async (
     res
       .status(500)
       .json({ message: serverMessagesResponses.internalServerError });
-    console.error(error);
+    console.error(error.message);
   }
 };
