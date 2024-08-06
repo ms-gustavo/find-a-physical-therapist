@@ -11,7 +11,14 @@ export const createAConsult = async (
 ) => {
   const { therapistId, datetime } = req.body;
 
-  await therapistExists(therapistId);
+  const therapistExist = await therapistExists(therapistId);
+  if (
+    (therapistExist as { success: boolean; message: string }).success === false
+  ) {
+    return res
+      .status(404)
+      .json((therapistExist as { success: boolean; message: string }).message);
+  }
   const { date, time } = formatDate(datetime);
 
   const existingConsultation = await Consultation.findOne({

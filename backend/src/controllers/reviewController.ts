@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { AuthenticatedRequest } from "../interfaces/interface";
 import Review from "../models/Review";
-import { clientExists, therapistExists } from "../utils/findClientOrTherapist";
+import { therapistExists } from "../utils/findClientOrTherapist";
 import { serverMessagesResponses } from "../utils/serverMessagesResponses";
 
 export const createAReview = async (
@@ -11,9 +11,17 @@ export const createAReview = async (
   const { therapistId, rating, comment } = req.body;
 
   try {
-    await therapistExists(therapistId);
-    const clientId = req.user!._id;
-    await clientExists(clientId);
+    const therapistExist = await therapistExists(therapistId);
+    if (
+      (therapistExist as { success: boolean; message: string }).success ===
+      false
+    ) {
+      return res
+        .status(404)
+        .json(
+          (therapistExist as { success: boolean; message: string }).message
+        );
+    }
 
     const newReview = new Review({
       clientId: req.user!._id,

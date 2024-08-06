@@ -6,7 +6,6 @@ import {
   getConsultHistory,
 } from "../controllers/consultController";
 import { validateCreateConsultsFields } from "../middlewares/validateConsultFieldsMiddleware";
-import { validadeGetConsultsByDateFieldsMiddleware } from "../middlewares/validateGetConsultsByDateFieldsMiddleware";
 
 const router = express.Router();
 

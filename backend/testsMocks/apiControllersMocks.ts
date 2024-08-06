@@ -189,6 +189,7 @@ export const therapistMessages = {
   locationIsRequired: "A localização é obrigatória",
   inscriptionNumberIsRequired: "O número de registro de classe é obrigatório",
   therapistsNotFound: "Nenhum fisioterapeuta encontrado",
+  therapistNotFound: "Fisioterapeuta não encontrado",
 };
 
 export const createNewReview = {

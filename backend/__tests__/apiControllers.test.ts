@@ -35,6 +35,8 @@ import { formatDate } from "../src/utils/formatDate";
 import Consultation, { IConsultation } from "../src/models/Consultation";
 import { Query } from "mongoose";
 import Review, { IReview } from "../src/models/Review";
+import mongoose from "mongoose";
+import { createAConsult } from "../src/controllers/consultController";
 
 let clientToken: string;
 let clientId: any;
@@ -64,7 +66,6 @@ describe("Auth Controller", () => {
 
       expect(response.status).toBe(401);
       expect(response.body.message).toBe(userMessages.noTokenProvided);
-      // expect(response.body.type).toBe("Client");
     });
   });
 
@@ -1101,6 +1102,28 @@ describe("Review Controller", () => {
       expect(createAReviewResponse.body.comment).toBe(createNewReview.comment);
     });
 
+    it("should return an validation error if therapist doesnt exists", async () => {
+      const authenticateClientResponse = await request(app)
+        .get(usersApi.profile)
+        .set("Authorization", `Bearer ${clientToken}`);
+
+      expect(authenticateClientResponse.status).toBe(200);
+      expect(authenticateClientResponse.body.type).toBe("Client");
+      const simulatedId = new mongoose.Types.ObjectId();
+      const createAReviewResponse = await request(app)
+        .post(reviewApi.create)
+        .set("Authorization", `Bearer ${clientToken}`)
+        .send({
+          therapistId: simulatedId,
+          ...createNewReview,
+        });
+      console.log(createAReviewResponse.body);
+      expect(createAReviewResponse.status).toBe(404);
+      expect(createAReviewResponse.body).toBe(
+        therapistMessages.therapistNotFound
+      );
+    });
+
     it("should handle errors when saving a new review", async () => {
       const findSpy = jest
         .spyOn(Review.prototype, "save")
@@ -1284,6 +1307,46 @@ describe("Consult Controller", () => {
       );
     });
 
+    it("should return an validation error if therapist doesnt exists", async () => {
+      const authenticateClientResponse = await request(app)
+        .get(usersApi.profile)
+        .set("Authorization", `Bearer ${clientToken}`);
+
+      expect(authenticateClientResponse.status).toBe(200);
+      expect(authenticateClientResponse.body.type).toBe("Client");
+      const simulatedId = new mongoose.Types.ObjectId();
+      const createAConsultResponse = await request(app)
+        .post(consultApi.create)
+        .set("Authorization", `Bearer ${clientToken}`)
+        .send({
+          clientId,
+          therapistId: simulatedId,
+          datetime: actualDate,
+        });
+      expect(createAConsultResponse.status).toBe(404);
+      expect(createAConsultResponse.body).toBe(
+        therapistMessages.therapistNotFound
+      );
+    });
+
+    it("should return an validation error if is missing therapistId or Datetime", async () => {
+      const authenticateClientResponse = await request(app)
+        .get(usersApi.profile)
+        .set("Authorization", `Bearer ${clientToken}`);
+
+      expect(authenticateClientResponse.status).toBe(200);
+      expect(authenticateClientResponse.body.type).toBe("Client");
+
+      const createAConsultResponse = await request(app)
+        .post(consultApi.create)
+        .set("Authorization", `Bearer ${clientToken}`)
+        .send({
+          clientId,
+          datetime: actualDate,
+        });
+
+      expect(createAConsultResponse.status).toBe(400);
+    });
     it("should return an validation error if consult already exists", async () => {
       const authenticateClientResponse = await request(app)
         .get(usersApi.profile)
