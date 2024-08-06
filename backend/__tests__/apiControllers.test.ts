@@ -58,6 +58,16 @@ function removeKey(
 }
 
 describe("Auth Controller", () => {
+  describe("Auth Middleware", () => {
+    it("should return validation error if token is not provided", async () => {
+      const response = await request(app).get(usersApi.profile);
+
+      expect(response.status).toBe(401);
+      expect(response.body.message).toBe(userMessages.noTokenProvided);
+      // expect(response.body.type).toBe("Client");
+    });
+  });
+
   describe("Auth Controller - Register New Client", () => {
     it("should register a new client successfully", async () => {
       const response = await request(app)

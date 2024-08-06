@@ -140,6 +140,7 @@ export const userMessages = {
   invalidCredentials: "E-mail ou senha inválidos",
   userDeleted: "Usuário deletado",
   internalServerError: "Erro interno do servidor",
+  noTokenProvided: "Nenhum token de autenticação fornecido",
 };
 
 export const usersApi = {
