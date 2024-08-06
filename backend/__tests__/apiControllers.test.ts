@@ -36,7 +36,6 @@ import Consultation, { IConsultation } from "../src/models/Consultation";
 import { Query } from "mongoose";
 import Review, { IReview } from "../src/models/Review";
 import mongoose from "mongoose";
-import { createAConsult } from "../src/controllers/consultController";
 
 let clientToken: string;
 let clientId: any;

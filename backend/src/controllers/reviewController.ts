@@ -4,6 +4,56 @@ import Review from "../models/Review";
 import { therapistExists } from "../utils/findClientOrTherapist";
 import { serverMessagesResponses } from "../utils/serverMessagesResponses";
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Review:
+ *       type: object
+ *       required:
+ *         - therapistId
+ *         - rating
+ *         - comment
+ *       properties:
+ *         therapistId:
+ *           type: string
+ *           description: ID do terapeuta
+ *         rating:
+ *           type: number
+ *           description: Avaliação do terapeuta
+ *         comment:
+ *           type: string
+ *           description: Comentário sobre o terapeuta
+ *       example:
+ *         therapistId: 60d0fe4f5311236168a109ca
+ *         rating: 5
+ *         comment: Excelente terapeuta!
+ */
+
+/**
+ * @swagger
+ * /reviews:
+ *   post:
+ *     summary: Cria uma nova avaliação
+ *     tags: [Reviews]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Review'
+ *     responses:
+ *       201:
+ *         description: Avaliação criada com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Review'
+ *       404:
+ *         description: Terapeuta não encontrado
+ *       500:
+ *         description: Erro no servidor
+ */
 export const createAReview = async (
   req: AuthenticatedRequest,
   res: Response
