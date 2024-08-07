@@ -107,7 +107,7 @@ describe("Auth Controller", () => {
         .post(clientApi.register)
         .send(newClient);
 
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(409);
       expect(response.body).toHaveProperty("message");
       expect(response.body.message).toBe(clientMessages.userAlreadyExists);
     });
@@ -210,7 +210,7 @@ describe("Auth Controller", () => {
         .post(therapistApi.register)
         .send(newTherapist);
 
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(409);
       expect(response.body).toHaveProperty("message");
       expect(response.body.message).toBe(therapistMessages.userAlreadyExists);
     });
@@ -404,7 +404,7 @@ describe("Auth Controller", () => {
           email: newClient.email,
           password: newClient.password + "1",
         });
-      expect(response.status).toBe(404);
+      expect(response.status).toBe(401);
       expect(response.body).toHaveProperty("message");
       expect(response.body.message).toBe(userMessages.invalidCredentials);
     });
@@ -519,7 +519,7 @@ describe("Auth Controller", () => {
           email: newTherapist.email,
           password: newTherapist.password + "1",
         });
-      expect(response.status).toBe(404);
+      expect(response.status).toBe(401);
       expect(response.body).toHaveProperty("message");
       expect(response.body.message).toBe(userMessages.invalidCredentials);
     });

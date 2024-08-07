@@ -2,6 +2,220 @@
  * @swagger
  * components:
  *    schemas:
+ *       Client:
+ *          type: object
+ *          required:
+ *             - name
+ *             - email
+ *             - password
+ *             - location
+ *          properties:
+ *             name:
+ *                type: string
+ *                description: Nome do cliente
+ *             email:
+ *                type: string
+ *                description: Email do cliente
+ *                example: email@email.com
+ *             password:
+ *                type: string
+ *                description: Senha do cliente
+ *             location:
+ *                type: object
+ *                properties:
+ *                   type:
+ *                      type: string
+ *                      example: Point
+ *                   coordinates:
+ *                      type: array
+ *                      items:
+ *                         type: number
+ *                      minItems: 2
+ *                      maxItems: 2
+ *                      example: [0, 0]
+ *                description: Localização do cliente
+ *
+ */
+
+/**
+ * @swagger
+ * /api/auth/client/register:
+ *    post:
+ *       summary: Registra um novo cliente
+ *       tags: [Client]
+ *       security: []
+ *       requestBody:
+ *          required: true
+ *          content:
+ *             application/json:
+ *                schema:
+ *                   $ref: '#/components/schemas/Client'
+ *       responses:
+ *          201:
+ *             description: Cliente registrado com sucesso
+ *             content:
+ *                application/json:
+ *                   schema:
+ *                      type: object
+ *                      properties:
+ *                         token:
+ *                            type: string
+ *                         user:
+ *                            type: object
+ *                            properties:
+ *                               id:
+ *                                  type: string
+ *                               name:
+ *                                  type: string
+ *                               email:
+ *                                  type: string
+ *                               location:
+ *                                  type: object
+ *                                  properties:
+ *                                     type:
+ *                                        type: string
+ *                                        example: Point
+ *                                     coordinates:
+ *                                        type: array
+ *                                        items:
+ *                                           type: number
+ *                                        minItems: 2
+ *                                        maxItems: 2
+ *                                        example: [0, 0]
+ *          409:
+ *             description: Usuário já existente
+ *             content:
+ *                application/json:
+ *                   schema:
+ *                      type: object
+ *                      properties:
+ *                         status:
+ *                            type: number
+ *                            example: 409
+ *                         message:
+ *                            type: string
+ *                            example: Usuário já existente
+ *          400:
+ *             description: Erro de validação para campos requiridos
+ *             content:
+ *                application/json:
+ *                   schema:
+ *                      type: object
+ *                      properties:
+ *                         status:
+ *                            type: number
+ *                            example: 400
+ *                         message:
+ *                            type: string
+ *                            example: O nome é obrigatório
+ *          500:
+ *             description: Erro do servidor
+ *             content:
+ *                application/json:
+ *                   schema:
+ *                      type: object
+ *                      properties:
+ *                         message:
+ *                            type: string
+ *                            example: Erro interno do servidor
+ *
+ * /api/auth/client/login:
+ *    post:
+ *       summary: Faz o login de um cliente
+ *       tags: [Client]
+ *       security: []
+ *       requestBody:
+ *          required: true
+ *          content:
+ *             application/json:
+ *                schema:
+ *                   type: object
+ *                   properties:
+ *                      email:
+ *                         type: string
+ *                         example: email@email.com
+ *                      password:
+ *                         type: string
+ *       responses:
+ *          200:
+ *             description: Usuário logado com sucesso
+ *             content:
+ *                application/json:
+ *                   schema:
+ *                      type: object
+ *                      properties:
+ *                         token:
+ *                            type: string
+ *                         user:
+ *                            type: object
+ *                            properties:
+ *                               id:
+ *                                  type: string
+ *                               name:
+ *                                  type: string
+ *                               email:
+ *                                  type: string
+ *                               location:
+ *                                  type: object
+ *                                  properties:
+ *                                     type:
+ *                                        type: string
+ *                                        example: Point
+ *                                     coordinates:
+ *                                        type: array
+ *                                        items:
+ *                                           type: number
+ *                                        minItems: 2
+ *                                        maxItems: 2
+ *                                        example: [0, 0]
+ *          400:
+ *             description: Erro de validação para campos requiridos
+ *             content:
+ *                application/json:
+ *                   schema:
+ *                      type: object
+ *                      properties:
+ *                         message:
+ *                            type: string
+ *                            example: E-mail é obrigatório
+ *          404:
+ *             description: Usuário não encontrado
+ *             content:
+ *                application/json:
+ *                   schema:
+ *                      type: object
+ *                      properties:
+ *                         message:
+ *                            type: string
+ *                            example: Usuário não encontrado
+ *          401:
+ *             description: E-mail ou senha incorretos
+ *             content:
+ *                application/json:
+ *                   schema:
+ *                      type: object
+ *                      properties:
+ *                         message:
+ *                            type: string
+ *                            example: E-mail ou senha inválidos
+ *          500:
+ *             description: Erro do servidor
+ *             content:
+ *                application/json:
+ *                   schema:
+ *                      type: object
+ *                      properties:
+ *                         message:
+ *                            type: string
+ *                            example: Erro interno do servidor
+ *
+ *
+ */
+
+/**
+ * @swagger
+ * components:
+ *    schemas:
  *       Therapist:
  *          type: object
  *          required:
@@ -20,6 +234,7 @@
  *             email:
  *                type: string
  *                description: Email do terapeuta
+ *                example: email@email.com
  *             password:
  *                type: string
  *                description: Senha do terapeuta
@@ -39,10 +254,14 @@
  *                properties:
  *                   type:
  *                      type: string
+ *                      example: Point
  *                   coordinates:
  *                      type: array
  *                      items:
- *                         type: string
+ *                         type: number
+ *                      minItems: 2
+ *                      maxItems: 2
+ *                      example: [0, 0]
  *                description: Localização do terapeuta
  *             inscriptionNumber:
  *                type: string
@@ -86,10 +305,14 @@
  *                                  properties:
  *                                     type:
  *                                        type: string
+ *                                        example: Point
  *                                     coordinates:
  *                                        type: array
  *                                        items:
- *                                           type: string
+ *                                           type: number
+ *                                        minItems: 2
+ *                                        maxItems: 2
+ *                                        example: [0, 0]
  *                               inscriptionNumber:
  *                                  type: string
  *        204:
@@ -146,10 +369,14 @@
  *                                     properties:
  *                                        type:
  *                                           type: string
+ *                                           example: Point
  *                                        coordinates:
  *                                           type: array
  *                                           items:
- *                                              type: string
+ *                                              type: number
+ *                                           minItems: 2
+ *                                           maxItems: 2
+ *                                           example: [0, 0]
  *                                  inscriptionNumber:
  *                                     type: string
  *          204:
@@ -226,10 +453,14 @@
  *                                     properties:
  *                                        type:
  *                                           type: string
+ *                                           example: Point
  *                                        coordinates:
  *                                           type: array
  *                                           items:
- *                                              type: string
+ *                                              type: number
+ *                                           minItems: 2
+ *                                           maxItems: 2
+ *                                           example: [0, 0]
  *                                  inscriptionNumber:
  *                                     type: string
  *          204:
@@ -286,10 +517,14 @@
  *                                     properties:
  *                                        type:
  *                                           type: string
+ *                                           example: Point
  *                                        coordinates:
  *                                           type: array
  *                                           items:
- *                                              type: string
+ *                                              type: number
+ *                                           minItems: 2
+ *                                           maxItems: 2
+ *                                           example: [0, 0]
  *                                  inscriptionNumber:
  *                                     type: string
  *          404:

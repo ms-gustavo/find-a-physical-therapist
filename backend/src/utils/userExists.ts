@@ -27,7 +27,7 @@ export async function findUser(
   const responseMap = {
     register: {
       userExists: {
-        status: 400,
+        status: 409,
         message: serverMessagesResponses.userAlreadyExists,
       } as FindUserRegisterResponse,
     },

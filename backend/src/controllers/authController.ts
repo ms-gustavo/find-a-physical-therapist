@@ -7,7 +7,6 @@ import { FindUserSuccessResponse } from "../interfaces/interface";
 import { serverMessagesResponses } from "../utils/serverMessagesResponses";
 import Therapist, { ITherapist } from "../models/Therapist";
 import { isTherapist } from "../utils/typeGuards";
-import { AnyArray } from "mongoose";
 
 export const registerNewClient = async (req: Request, res: Response) => {
   const { name, email, password, location }: IClient = req.body;
@@ -52,7 +51,7 @@ export const loginClient = async (req: Request, res: Response) => {
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
     if (!isPasswordCorrect) {
       return res
-        .status(404)
+        .status(401)
         .json({ message: serverMessagesResponses.invalidCredentials });
     }
 
@@ -150,7 +149,7 @@ export const loginTherapist = async (req: Request, res: Response) => {
     );
     if (!isPasswordCorrect) {
       return res
-        .status(404)
+        .status(401)
         .json({ message: serverMessagesResponses.invalidCredentials });
     }
 
