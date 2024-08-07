@@ -270,6 +270,197 @@
 
 /**
  * @swagger
+ * /api/auth/therapist/register:
+ *    post:
+ *       summary: Registra um novo fisioterapeuta
+ *       tags: [Therapist]
+ *       security: []
+ *       requestBody:
+ *          required: true
+ *          content:
+ *             application/json:
+ *                schema:
+ *                   $ref: '#/components/schemas/Therapist'
+ *       responses:
+ *          201:
+ *             description: Terapeuta registrado com sucesso
+ *             content:
+ *                application/json:
+ *                   schema:
+ *                      type: object
+ *                      properties:
+ *                            token:
+ *                               type: string
+ *                            user:
+ *                               type: object
+ *                               properties:
+ *                                  id:
+ *                                     type: string
+ *                                  name:
+ *                                     type: string
+ *                                  email:
+ *                                     type: string
+ *                                  phoneNumber:
+ *                                     type: string
+ *                                  speciality:
+ *                                     type: array
+ *                                     items:
+ *                                        type: string
+ *                                  mediumCost:
+ *                                     type: number
+ *                                  inscriptionNumber:
+ *                                     type: string
+ *                                  location:
+ *                                     type: object
+ *                                     properties:
+ *                                        type:
+ *                                           type: string
+ *                                           example: Point
+ *                                        coordinates:
+ *                                           type: array
+ *                                           items:
+ *                                              type: number
+ *                                           minItems: 2
+ *                                           maxItems: 2
+ *                                           example: [0, 0]
+ *          409:
+ *             description: Usuário já existente
+ *             content:
+ *                application/json:
+ *                   schema:
+ *                      type: object
+ *                      properties:
+ *                         status:
+ *                            type: number
+ *                            example: 409
+ *                         message:
+ *                            type: string
+ *                            example: Usuário já existente
+ *          400:
+ *             description: Erro de validação para campos requiridos
+ *             content:
+ *                application/json:
+ *                   schema:
+ *                      type: object
+ *                      properties:
+ *                         status:
+ *                            type: number
+ *                            example: 400
+ *                         message:
+ *                            type: string
+ *                            example: O nome é obrigatório
+ *          500:
+ *             description: Erro do servidor
+ *             content:
+ *                application/json:
+ *                   schema:
+ *                      type: object
+ *                      properties:
+ *                         message:
+ *                            type: string
+ *                            example: Erro interno do servidor
+ *
+ * /api/auth/therapist/login:
+ *    post:
+ *       summary: Faz o login de um fisioterapeuta
+ *       tags: [Therapist]
+ *       security: []
+ *       requestBody:
+ *          required: true
+ *          content:
+ *             application/json:
+ *                schema:
+ *                   type: object
+ *                   properties:
+ *                      email:
+ *                         type: string
+ *                         example: email@email.com
+ *                      password:
+ *                         type: string
+ *       responses:
+ *          200:
+ *             description: Terapeuta logado com sucesso
+ *             content:
+ *                application/json:
+ *                   schema:
+ *                      type: object
+ *                      properties:
+ *                         token:
+ *                            type: string
+ *                         user:
+ *                            type: object
+ *                            properties:
+ *                               id:
+ *                                  type: string
+ *                               name:
+ *                                  type: string
+ *                               email:
+ *                                  type: string
+ *                               mediumCost:
+ *                                  type: number
+ *                               speciality:
+ *                                  type: array
+ *                                  items:
+ *                                     type: string
+ *                               inscriptionNumber:
+ *                                  type: string
+ *                               location:
+ *                                  type: object
+ *                                  properties:
+ *                                     type:
+ *                                        type: string
+ *                                        example: Point
+ *                                     coordinates:
+ *                                        type: array
+ *                                        items:
+ *                                           type: number
+ *                                        minItems: 2
+ *                                        maxItems: 2
+ *                                        example: [0, 0]
+ *          400:
+ *             description: Erro de validação para campos requiridos
+ *             content:
+ *                application/json:
+ *                   schema:
+ *                      type: object
+ *                      properties:
+ *                         message:
+ *                            type: string
+ *                            example: E-mail é obrigatório
+ *          404:
+ *             description: Usuário não encontrado
+ *             content:
+ *                application/json:
+ *                   schema:
+ *                      type: object
+ *                      properties:
+ *                         message:
+ *                            type: string
+ *                            example: Usuário não encontrado
+ *          401:
+ *             description: E-mail ou senha incorretos
+ *             content:
+ *                application/json:
+ *                   schema:
+ *                      type: object
+ *                      properties:
+ *                         message:
+ *                            type: string
+ *                            example: E-mail ou senha inválidos
+ *          500:
+ *             description: Erro do servidor
+ *             content:
+ *                application/json:
+ *                   schema:
+ *                      type: object
+ *                      properties:
+ *                         message:
+ *                            type: string
+ *                            example: Erro interno do servidor
+ */
+
+/**
+ * @swagger
  * /api/search/getalltherapists:
  *    get:
  *       summary: Obtém a lista de todos os fisioterapeutas cadastrados
