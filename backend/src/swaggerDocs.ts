@@ -1,5 +1,311 @@
 /**
  * @swagger
+ * /api/users/profile:
+ *    get:
+ *       summary: Retorna os dados do usuário autenticado
+ *       tags: [Users]
+ *       responses:
+ *          200:
+ *             description: Usuário encontrado
+ *             content:
+ *                application/json:
+ *                   schema:
+ *                      type: object
+ *                      properties:
+ *                         type:
+ *                            type: string
+ *                            example: Client
+ *                         user:
+ *                            type: object
+ *                            properties:
+ *                               location:
+ *                                  type: object
+ *                                  properties:
+ *                                     type:
+ *                                        type: string
+ *                                        example: Point
+ *                                     coordinates:
+ *                                        type: array
+ *                                        items:
+ *                                           type: number
+ *                                        minItems: 2
+ *                                        maxItems: 2
+ *                                        example: [0, 0]
+ *                               _id:
+ *                                  type: string
+ *                               name:
+ *                                  type: string
+ *                               email:
+ *                                  type: string
+ *          401:
+ *             description: Necessário autenticação
+ *             content:
+ *                application/json:
+ *                   schema:
+ *                      type: object
+ *                      properties:
+ *                         message:
+ *                            type: string
+ *                            example: Nenhum token de autenticação fornecido
+ *          404:
+ *             description: Usuário não encontrado
+ *             content:
+ *                application/json:
+ *                   schema:
+ *                      type: object
+ *                      properties:
+ *                         message:
+ *                            type: string
+ *                            example: Usuário não encontrado
+ *          500:
+ *             description: Erro do servidor
+ *             content:
+ *                application/json:
+ *                   schema:
+ *                      type: object
+ *                      properties:
+ *                         message:
+ *                            type: string
+ *                            example: Erro interno do servidor
+ *
+ * /api/users/client/profile:
+ *    put:
+ *       summary: Atualiza as informações do Cliente autenticado
+ *       tags: [Client]
+ *       requestBody:
+ *          required: true
+ *          content:
+ *             application/json:
+ *                schema:
+ *                   type: object
+ *                   properties:
+ *                      name:
+ *                         type: string
+ *                      location:
+ *                         type: object
+ *                         properties:
+ *                            type:
+ *                               type: string
+ *                               example: Point
+ *                            coordinates:
+ *                               type: array
+ *                               items:
+ *                                  type: number
+ *                               minItems: 2
+ *                               maxItems: 2
+ *                               example: [1, 1]
+ *       responses:
+ *          200:
+ *             description: Cliente atualizado
+ *             content:
+ *                application/json:
+ *                   schema:
+ *                      type: object
+ *                      properties:
+ *                         updatedUser:
+ *                            type: object
+ *                            properties:
+ *                               _id:
+ *                                  type: string
+ *                               email:
+ *                                  type: string
+ *                               name:
+ *                                  type: string
+ *                               location:
+ *                                  type: object
+ *                                  properties:
+ *                                     type:
+ *                                        type: string
+ *                                        example: Point
+ *                                     coordinates:
+ *                                        type: array
+ *                                        items:
+ *                                           type: number
+ *                                        minItems: 2
+ *                                        maxItems: 2
+ *                                        example: [1, 1]
+ *          401:
+ *             description: Necessário autenticação
+ *             content:
+ *                application/json:
+ *                   schema:
+ *                      type: object
+ *                      properties:
+ *                         message:
+ *                            type: string
+ *                            example: Nenhum token de autenticação fornecido
+ *          404:
+ *             description: Usuário não encontrado
+ *             content:
+ *                application/json:
+ *                   schema:
+ *                      type: object
+ *                      properties:
+ *                         message:
+ *                            type: string
+ *                            example: Usuário não encontrado
+ *          500:
+ *             description: Erro do servidor
+ *             content:
+ *                application/json:
+ *                   schema:
+ *                      type: object
+ *                      properties:
+ *                         message:
+ *                            type: string
+ *                            example: Erro interno do servidor
+ * /api/users/therapist/profile:
+ *    put:
+ *       summary: Atualiza as informações do Terapeuta autenticado
+ *       tags: [Therapist]
+ *       requestBody:
+ *          required: true
+ *          content:
+ *             application/json:
+ *                schema:
+ *                   type: object
+ *                   properties:
+ *                      name:
+ *                         type: string
+ *                      speciality:
+ *                         type: array
+ *                         items:
+ *                            type: string
+ *                      mediumCost:
+ *                         type: number
+ *                      phoneNumber:
+ *                         type: string
+ *                      location:
+ *                         type: object
+ *                         properties:
+ *                            type:
+ *                               type: string
+ *                               example: Point
+ *                            coordinates:
+ *                               type: array
+ *                               items:
+ *                                  type: number
+ *                               minItems: 2
+ *                               maxItems: 2
+ *                               example: [1, 1]
+ *       responses:
+ *          200:
+ *             description: Fisioterapeuta atualizado
+ *             content:
+ *                application/json:
+ *                   schema:
+ *                      type: object
+ *                      properties:
+ *                         updatedUser:
+ *                            type: object
+ *                            properties:
+ *                               _id:
+ *                                  type: string
+ *                               email:
+ *                                  type: string
+ *                               name:
+ *                                  type: string
+ *                               speciality:
+ *                                  type: array
+ *                                  items:
+ *                                     type: string
+ *                               mediumCost:
+ *                                  type: number
+ *                               phoneNumber:
+ *                                  type: string
+ *                               location:
+ *                                  type: object
+ *                                  properties:
+ *                                     type:
+ *                                        type: string
+ *                                        example: Point
+ *                                     coordinates:
+ *                                        type: array
+ *                                        items:
+ *                                           type: number
+ *                                        minItems: 2
+ *                                        maxItems: 2
+ *                                        example: [1, 1]
+ *          401:
+ *             description: Necessário autenticação
+ *             content:
+ *                application/json:
+ *                   schema:
+ *                      type: object
+ *                      properties:
+ *                         message:
+ *                            type: string
+ *                            example: Nenhum token de autenticação fornecido
+ *          404:
+ *             description: Usuário não encontrado
+ *             content:
+ *                application/json:
+ *                   schema:
+ *                      type: object
+ *                      properties:
+ *                         message:
+ *                            type: string
+ *                            example: Usuário não encontrado
+ *          500:
+ *             description: Erro do servidor
+ *             content:
+ *                application/json:
+ *                   schema:
+ *                      type: object
+ *                      properties:
+ *                         message:
+ *                            type: string
+ *                            example: Erro interno do servidor
+ *
+ * /api/users/profile/delete:
+ *    delete:
+ *       summary: Deleta o perfil do usuário autenticado
+ *       tags: [Users]
+ *       responses:
+ *          200:
+ *             description: Usuário deletado com sucesso
+ *             content:
+ *                application/json:
+ *                   schema:
+ *                      type: object
+ *                      properties:
+ *                         message:
+ *                            type: string
+ *                            example: Usuário deletado
+ *          401:
+ *             description: Necessário autenticação
+ *             content:
+ *                application/json:
+ *                   schema:
+ *                      type: object
+ *                      properties:
+ *                         message:
+ *                            type: string
+ *                            example: Nenhum token de autenticação fornecido
+ *          404:
+ *             description: Usuário não encontrado
+ *             content:
+ *                application/json:
+ *                   schema:
+ *                      type: object
+ *                      properties:
+ *                         message:
+ *                            type: string
+ *                            example: Usuário não encontrado
+ *          500:
+ *             description: Erro do servidor
+ *             content:
+ *                application/json:
+ *                   schema:
+ *                      type: object
+ *                      properties:
+ *                         message:
+ *                            type: string
+ *                            example: Erro interno do servidor
+ */
+
+/**
+ * @swagger
  * components:
  *    schemas:
  *       Client:
@@ -794,6 +1100,26 @@
  *                application/json:
  *                   schema:
  *                      $ref: '#/components/schemas/Consultation'
+ *          401:
+ *             description: Necessário autenticação
+ *             content:
+ *                application/json:
+ *                   schema:
+ *                      type: object
+ *                      properties:
+ *                         message:
+ *                            type: string
+ *                            example: Nenhum token de autenticação fornecido
+ *          400:
+ *             description: Erro de validação para campos requiridos
+ *             content:
+ *                application/json:
+ *                   schema:
+ *                      type: object
+ *                      properties:
+ *                         message:
+ *                            type: string
+ *                            example: A data e hora da consulta são obrigatórias
  *          404:
  *             description: Fisioterapeuta não existe
  *             content:
@@ -869,6 +1195,16 @@
  *                         message:
  *                            type: string
  *                            example: ID do terapeuta ou data incorretos
+ *          401:
+ *             description: Necessário autenticação
+ *             content:
+ *                application/json:
+ *                   schema:
+ *                      type: object
+ *                      properties:
+ *                         message:
+ *                            type: string
+ *                            example: Nenhum token de autenticação fornecido
  *          500:
  *             description: Erro no servidor
  *             content:
@@ -905,6 +1241,16 @@
  *                               $ref: '#/components/schemas/Consultation'
  *          204:
  *             description: Nenhuma consulta encontrada
+ *          401:
+ *             description: Necessário autenticação
+ *             content:
+ *                application/json:
+ *                   schema:
+ *                      type: object
+ *                      properties:
+ *                         message:
+ *                            type: string
+ *                            example: Nenhum token de autenticação fornecido
  *          500:
  *             description: Erro no servidor
  *             content:
@@ -961,7 +1307,31 @@
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Review'
+ *               type: object
+ *               properties:
+ *                  clientId:
+ *                   type: string
+ *                  therapistId:
+ *                   type: string
+ *                  rating:
+ *                   type: number
+ *                  comment:
+ *                   type: string
+ *                  _id:
+ *                   type: string
+ *                  createdAt:
+ *                   type: string
+ *                   format: date-time
+ *       401:
+ *          description: Necessário autenticação
+ *          content:
+ *             application/json:
+ *                schema:
+ *                   type: object
+ *                   properties:
+ *                      message:
+ *                         type: string
+ *                         example: Nenhum token de autenticação fornecido
  *       404:
  *          description: Terapeuta não encontrado
  *          content:
@@ -972,6 +1342,16 @@
  *                 message:
  *                   type: string
  *                   example: Terapeuta não encontrado
+ *       400:
+ *          description: Erro de validação para campos requiridos
+ *          content:
+ *             application/json:
+ *                schema:
+ *                   type: object
+ *                   properties:
+ *                      message:
+ *                         type: string
+ *                         example: A classificação é obrigatória
  *       500:
  *         description: Erro no servidor
  *         content:
@@ -987,6 +1367,7 @@
  *   get:
  *     summary: Obtém todas as avaliações de um terapeuta específico
  *     tags: [Reviews]
+ *     security: []
  *     parameters:
  *       - in: path
  *         name: therapistId

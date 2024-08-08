@@ -1,12 +1,20 @@
-import Client from "../models/Client";
-import Therapist from "../models/Therapist";
+import Client, { IClient } from "../models/Client";
+import Therapist, { ITherapist } from "../models/Therapist";
 
 export async function getUserModel(userId: string) {
   const client = await Client.findById(userId);
-  if (client) return { user: client, type: "Client" };
+  if (client) {
+    const clientWithoutPassword: Partial<IClient> = client.toObject();
+    delete clientWithoutPassword.password;
+    return { user: clientWithoutPassword, type: "Client" };
+  }
 
   const therapist = await Therapist.findById(userId);
-  if (therapist) return { user: therapist, type: "Therapist" };
+  if (therapist) {
+    const therapistWithoutPassword: Partial<ITherapist> = therapist.toObject();
+    delete therapistWithoutPassword.password;
+    return { user: therapist, type: "Therapist" };
+  }
 
   return null;
 }
