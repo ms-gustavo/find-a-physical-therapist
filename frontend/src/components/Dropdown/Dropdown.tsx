@@ -29,7 +29,10 @@ const Dropdown = ({ label, options }: DropdownProps) => {
 
   return (
     <div className="relative" ref={dropdownRef}>
-      <button onClick={() => setIsOpen(!isOpen)} className="text-white mx-4">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="text-light-text dark:text-dark-text mx-4"
+      >
         {label}
       </button>
       {isOpen && (
