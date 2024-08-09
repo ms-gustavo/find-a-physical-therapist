@@ -17,6 +17,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useState } from "react";
+import axios from "axios";
+import { geocodeAddress } from "@/utils/geocode";
 
 const ClientRegisterForm = () => {
   const form = useForm<ClientRegisterFormValues>({
@@ -37,8 +40,49 @@ const ClientRegisterForm = () => {
     },
   });
 
-  function onSubmit(values: ClientRegisterFormValues) {
-    console.log(values);
+  const [loading, setLoading] = useState(false);
+
+  const fetchAddress = async (cep: string) => {
+    if (!cep) return;
+
+    setLoading(true);
+    try {
+      const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
+      const data = response.data;
+
+      form.setValue("address.street", data.logradouro || "");
+      form.setValue("address.neighborhood", data.bairro || "");
+      form.setValue("address.city", data.localidade || "");
+      form.setValue("address.state", data.uf || "");
+    } catch (error) {
+      console.error("Erro ao buscar o endereço:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  async function onSubmit(values: ClientRegisterFormValues) {
+    setLoading(true);
+    try {
+      const address = `${values.address.street}, ${values.address.number}, ${values.address.neighborhood}, ${values.address.city}, ${values.address.state}, Brazil`;
+      const { latitude, longitude } = await geocodeAddress(address);
+
+      const formData = {
+        username: values.username,
+        email: values.email,
+        password: values.password,
+        location: {
+          type: "Point",
+          coordinates: [longitude, latitude],
+        },
+      };
+
+      console.log("Transformed Data:", formData);
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -115,6 +159,7 @@ const ClientRegisterForm = () => {
                   <Input
                     placeholder="Digite seu CEP"
                     {...field}
+                    onBlur={(e) => fetchAddress(e.target.value)}
                     className="border border-gray-300 p-2 rounded-md"
                   />
                 </FormControl>
@@ -234,8 +279,9 @@ const ClientRegisterForm = () => {
         <Button
           type="submit"
           className="w-full bg-primary hover:bg-primary-dark rounded-md py-2"
+          disabled={loading}
         >
-          Registrar
+          {loading ? "Carregando..." : "Registrar"}
         </Button>
       </form>
     </Form>
