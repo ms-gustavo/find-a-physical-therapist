@@ -2,9 +2,12 @@ import type { Metadata } from "next";
 import { Inter as FontSans } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar/Navbar";
+import { Toaster } from "react-hot-toast";
 import ClientProvider from "@/components/ClientProvider/ClientProvider";
 import ThemeProvider from "@/components/ThemeProvider/ThemeProvider";
 import { cn } from "@/lib/utils";
+import dotenv from "dotenv";
+dotenv.config();
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -30,6 +33,7 @@ export default function RootLayout({
         )}
       >
         <ClientProvider>
+          <Toaster />
           <ThemeProvider />
           <Navbar /> {children}
         </ClientProvider>

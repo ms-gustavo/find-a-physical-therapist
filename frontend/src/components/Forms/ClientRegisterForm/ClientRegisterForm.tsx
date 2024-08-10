@@ -13,7 +13,8 @@ import { mutualDefaultValues } from "@/utils/defaultValues";
 import { FormLayout } from "../FormLayout/FormLayout";
 import { UserFields } from "../FormsComponents/UserFields";
 import { AddressFields } from "../FormsComponents/AddressFields";
-import axios from "axios";
+import { clientRegister } from "@/utils/serverRequests";
+import toast from "react-hot-toast";
 
 const ClientRegisterForm = () => {
   const form = useForm<ClientRegisterFormValues>({
@@ -33,7 +34,7 @@ const ClientRegisterForm = () => {
       const { longitude, latitude } = await transformAddressToLongLat(values);
 
       const formData = {
-        name: values.username,
+        name: values.name,
         email: values.email,
         password: values.password,
         location: {
@@ -43,17 +44,13 @@ const ClientRegisterForm = () => {
       };
 
       try {
-        const test = await axios.post(
-          "http://localhost:5000/api/auth/client/register",
-          formData
-        );
-        console.log("Form submitted successfully:", test.data);
+        const response = await clientRegister(formData);
+        console.log("Form submitted successfully:", response.data);
+        toast.success("Cadastro realizado com sucesso!");
       } catch (error: any) {
-        if (error.response) {
-          console.error("Error submitting form:", error.response.data); //
-        } else {
-          console.error("Error submitting form:", error.message);
-        }
+        toast.error(
+          `Erro ao realizar cadastro! ${error.response.data.message}`
+        );
       }
     } catch (error) {
       console.error("Error submitting form:", error);

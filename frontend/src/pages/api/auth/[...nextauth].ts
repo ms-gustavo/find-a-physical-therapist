@@ -12,13 +12,15 @@ export default NextAuth({
     CredentialsProvider({
       name: "Credentials",
       credentials: {
+        id: { label: "id", type: "text" },
         email: { label: "email", type: "text" },
         password: { label: "Password", type: "password" },
       },
       authorize: async (credentials): Promise<User | null> => {
         if (
           credentials?.email === "test" &&
-          credentials?.password === "password"
+          credentials?.password === "password" &&
+          credentials?.id === "id"
         ) {
           const user: User = {
             id: "1",

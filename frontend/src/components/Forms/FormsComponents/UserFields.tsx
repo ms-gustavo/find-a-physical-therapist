@@ -17,7 +17,7 @@ export const UserFields: React.FC<UserFieldsProps> = ({ form }) => (
   <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
     <FormField
       control={form.control}
-      name="username"
+      name="name"
       render={({ field }) => (
         <FormItem>
           <FormLabel>Nome</FormLabel>

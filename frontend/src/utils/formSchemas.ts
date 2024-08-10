@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const clientRegisterFormSchema = z.object({
-  username: z.string().min(1, "O nome é obrigatório"),
+  name: z.string().min(1, "O nome é obrigatório"),
   email: z.string().email("Email inválido"),
   password: z.string().min(6, "A senha deve ter no mínimo 6 caracteres"),
   address: z.object({
