@@ -13,6 +13,13 @@ import {
 const Navbar = () => {
   const { data: session } = useSession();
 
+  const handleLogout = async () => {
+    await signOut({
+      redirect: false,
+      callbackUrl: "/",
+    });
+  };
+
   return (
     <nav className="bg-light-background dark:bg-dark-background p-4">
       <div className="container mx-auto flex justify-between items-center">
@@ -28,13 +35,13 @@ const Navbar = () => {
             <>
               <Popover>
                 <PopoverTrigger>
-                  <UserIcon />
+                  <UserIcon className="h-10 w-10" aria-hidden="true" />
                 </PopoverTrigger>
                 <PopoverContent className="flex flex-col space-y-2 p-2">
                   <Link href="/meus-dados" className="block mx-4">
                     Meus dados
                   </Link>
-                  <button onClick={() => signOut()} className="block mx-4">
+                  <button onClick={handleLogout} className="block mx-4">
                     Logout
                   </button>
                 </PopoverContent>

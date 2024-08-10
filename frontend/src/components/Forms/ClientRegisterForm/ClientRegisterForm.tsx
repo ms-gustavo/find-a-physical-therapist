@@ -15,6 +15,7 @@ import { UserFields } from "../FormsComponents/UserFields";
 import { AddressFields } from "../FormsComponents/AddressFields";
 import { clientRegister } from "@/utils/serverRequests";
 import toast from "react-hot-toast";
+import { signIn } from "next-auth/react";
 
 const ClientRegisterForm = () => {
   const form = useForm<ClientRegisterFormValues>({
@@ -45,7 +46,12 @@ const ClientRegisterForm = () => {
 
       try {
         const response = await clientRegister(formData);
-        console.log("Form submitted successfully:", response.data);
+        console.log(response);
+        await signIn("credentials", {
+          email: values.email,
+          password: values.password,
+          redirect: false,
+        });
         toast.success("Cadastro realizado com sucesso!");
       } catch (error: any) {
         toast.error(
