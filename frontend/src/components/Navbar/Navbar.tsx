@@ -21,27 +21,42 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-light-background dark:bg-dark-background p-4">
+    <nav
+      id="navbar-component"
+      className="bg-light-background dark:bg-dark-background p-4"
+    >
       <div className="container mx-auto flex justify-between items-center">
         <div className="text-light-text dark:text-dark-text text-lg font-bold">
           <Link href="/">
-            <HomeIcon className="h-10 w-10" aria-hidden="true" />
+            <HomeIcon id="home-icon" className="h-10 w-10" aria-hidden="true" />
           </Link>
         </div>
 
         <div className="flex space-x-4">
-          <ThemeToggle />
+          <ThemeToggle data-value="theme-toggle" />
           {session ? (
             <>
               <Popover>
                 <PopoverTrigger>
-                  <UserIcon className="h-10 w-10" aria-hidden="true" />
+                  <UserIcon
+                    id="user-icon"
+                    className="h-10 w-10"
+                    aria-hidden="true"
+                  />
                 </PopoverTrigger>
                 <PopoverContent className="flex flex-col space-y-2 p-2">
-                  <Link href="/meus-dados" className="block mx-4">
+                  <Link
+                    id="my-data-link"
+                    href="/meus-dados"
+                    className="block mx-4"
+                  >
                     Meus dados
                   </Link>
-                  <button onClick={handleLogout} className="block mx-4">
+                  <button
+                    id="logout-button"
+                    onClick={handleLogout}
+                    className="block mx-4"
+                  >
                     Logout
                   </button>
                 </PopoverContent>
@@ -50,24 +65,44 @@ const Navbar = () => {
           ) : (
             <>
               <Popover>
-                <PopoverTrigger>Login</PopoverTrigger>
+                <PopoverTrigger data-value="login-popover">
+                  Login
+                </PopoverTrigger>
                 <PopoverContent className="flex flex-col space-y-2 p-2">
-                  <Link href="/login/client" className="block mx-4">
+                  <Link
+                    id="pacient-login"
+                    href="/login/client"
+                    className="block mx-4"
+                  >
                     Paciente
                   </Link>
-                  <Link href="/login/therapist" className="block mx-4">
+                  <Link
+                    id="therapist-login"
+                    href="/login/therapist"
+                    className="block mx-4"
+                  >
                     Terapeuta
                   </Link>
                 </PopoverContent>
               </Popover>
 
               <Popover>
-                <PopoverTrigger>Registrar</PopoverTrigger>
+                <PopoverTrigger data-value="register-popover">
+                  Registrar
+                </PopoverTrigger>
                 <PopoverContent className="flex flex-col space-y-2 p-2">
-                  <Link href="/register/client" className="block mx-4">
+                  <Link
+                    id="pacient-register"
+                    href="/register/client"
+                    className="block mx-4"
+                  >
                     Paciente
                   </Link>
-                  <Link href="/register/therapist" className="block mx-4">
+                  <Link
+                    id="therapist-register"
+                    href="/register/therapist"
+                    className="block mx-4"
+                  >
                     Terapeuta
                   </Link>
                 </PopoverContent>

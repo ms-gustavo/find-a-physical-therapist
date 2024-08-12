@@ -90,10 +90,19 @@ const TherapistRegisterForm = () => {
       onSubmit={onSubmit}
       loading={loading}
       type="register"
+      data-value="form-layout"
     >
-      <UserFields<TherapistRegisterFormValues> form={form} type="register" />
-      <TherapistFields form={form} />
-      <AddressFields form={form} handleCepChange={handleCepChange} />
+      <UserFields<TherapistRegisterFormValues>
+        data-value="user-fields-form"
+        form={form}
+        type="register"
+      />
+      <TherapistFields data-value="therapist-fields-form" form={form} />
+      <AddressFields
+        data-value="address-fields-form"
+        form={form}
+        handleCepChange={handleCepChange}
+      />
     </FormLayout>
   );
 };

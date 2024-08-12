@@ -3,12 +3,12 @@
 import { loginFormSchema, LoginFormValues } from "@/utils/formSchemas";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { loginDefaultValues } from "@/utils/defaultValues";
 import { FormLayout } from "../FormLayout/FormLayout";
 import { UserFields } from "../FormsComponents/UserFields";
 import toast from "react-hot-toast";
-import { signIn, useSession } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 const UserLoginForm = ({ userType }: { userType: string }) => {
@@ -49,8 +49,13 @@ const UserLoginForm = ({ userType }: { userType: string }) => {
       onSubmit={onSubmit}
       loading={loading}
       type="login"
+      data-value="form-layout"
     >
-      <UserFields<LoginFormValues> form={form} type="login" />
+      <UserFields<LoginFormValues>
+        data-value="user-fields-form"
+        form={form}
+        type="login"
+      />
     </FormLayout>
   );
 };

@@ -83,9 +83,18 @@ const ClientRegisterForm = () => {
       onSubmit={onSubmit}
       loading={loading}
       type="register"
+      data-value="form-layout"
     >
-      <UserFields<ClientRegisterFormValues> form={form} type="register" />
-      <AddressFields form={form} handleCepChange={handleCepChange} />
+      <UserFields<ClientRegisterFormValues>
+        data-value="user-fields-form"
+        form={form}
+        type="register"
+      />
+      <AddressFields
+        data-value="address-fields-form"
+        form={form}
+        handleCepChange={handleCepChange}
+      />
     </FormLayout>
   );
 };
