@@ -1,11 +1,12 @@
 "use client";
 
+import React from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   clientRegisterFormSchema,
   ClientRegisterFormValues,
 } from "@/utils/formSchemas";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { fetchAddress } from "@/utils/fetchAddress";
 import { transformAddressToLongLat } from "@/utils/transformAddressToLongLat";
@@ -66,8 +67,13 @@ const ClientRegisterForm = () => {
   }
 
   return (
-    <FormLayout form={form} onSubmit={onSubmit} loading={loading}>
-      <UserFields form={form} />
+    <FormLayout<ClientRegisterFormValues>
+      form={form}
+      onSubmit={onSubmit}
+      loading={loading}
+      type="register"
+    >
+      <UserFields<ClientRegisterFormValues> form={form} type="register" />
       <AddressFields form={form} handleCepChange={handleCepChange} />
     </FormLayout>
   );

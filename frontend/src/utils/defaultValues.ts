@@ -12,3 +12,8 @@ export const mutualDefaultValues = {
     complement: "",
   },
 };
+
+export const loginDefaultValues = {
+  email: "",
+  password: "",
+};

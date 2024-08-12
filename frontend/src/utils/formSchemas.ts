@@ -16,3 +16,10 @@ export const clientRegisterFormSchema = z.object({
 });
 
 export type ClientRegisterFormValues = z.infer<typeof clientRegisterFormSchema>;
+
+export const loginFormSchema = z.object({
+  email: z.string().email("Email inválido"),
+  password: z.string().min(6, "A senha deve ter no mínimo 6 caracteres"),
+});
+
+export type LoginFormValues = z.infer<typeof loginFormSchema>;

@@ -1,22 +1,23 @@
 import React from "react";
 import { Form } from "@/components/ui/form";
-import { UseFormReturn } from "react-hook-form";
-import { ClientRegisterFormValues } from "@/utils/formSchemas";
+import { FieldValues, UseFormReturn } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 
-interface FormLayoutProps {
-  form: UseFormReturn<ClientRegisterFormValues>;
-  onSubmit: (data: ClientRegisterFormValues) => void;
+interface FormLayoutProps<T extends FieldValues> {
+  form: UseFormReturn<T>;
+  onSubmit: (data: T) => void;
   loading: boolean;
   children: React.ReactNode;
+  type: string;
 }
 
-export const FormLayout: React.FC<FormLayoutProps> = ({
+export const FormLayout = <T extends FieldValues>({
   form,
   onSubmit,
   loading,
   children,
-}) => {
+  type,
+}: FormLayoutProps<T>) => {
   return (
     <Form {...form}>
       <form
@@ -29,7 +30,11 @@ export const FormLayout: React.FC<FormLayoutProps> = ({
           className="w-full bg-primary hover:bg-primary-dark rounded-md py-2"
           disabled={loading}
         >
-          {loading ? "Carregando..." : "Registrar"}
+          {loading
+            ? "Carregando..."
+            : type === "login"
+            ? "Entrar"
+            : "Cadastrar"}
         </Button>
       </form>
     </Form>
