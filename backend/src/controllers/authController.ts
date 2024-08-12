@@ -136,7 +136,6 @@ export const loginTherapist = async (req: Request, res: Response) => {
       return res.status(userCheck.status).json({ message: userCheck.message });
     }
     const therapist = (userCheck as FindUserSuccessResponse).user;
-
     if (!isTherapist(therapist)) {
       return res
         .status(500)
@@ -156,7 +155,7 @@ export const loginTherapist = async (req: Request, res: Response) => {
     const token = jwt.sign({ id: therapist._id }, process.env.JWT_SECRET!);
     res.status(200).json({
       token,
-      therapist: {
+      user: {
         id: therapist._id,
         name: therapist.name,
         email: therapist.email,
