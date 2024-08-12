@@ -1,4 +1,4 @@
-import { apiClientLogin } from "@/utils/apiEndpoints";
+import { apiClientLogin, apiTherapistLogin } from "@/utils/apiEndpoints";
 import axios from "axios";
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -17,10 +17,16 @@ export default NextAuth({
       credentials: {
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
+        userType: { label: "userType", type: "text" },
       },
       authorize: async (credentials): Promise<User | null> => {
         try {
-          const response = await axios.post(apiClientLogin, {
+          const apiUrl =
+            credentials?.userType === "client"
+              ? apiClientLogin
+              : apiTherapistLogin;
+
+          const response = await axios.post(apiUrl, {
             email: credentials?.email,
             password: credentials?.password,
           });

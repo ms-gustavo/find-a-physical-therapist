@@ -4,44 +4,51 @@ import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  clientRegisterFormSchema,
-  ClientRegisterFormValues,
+  therapistRegisterFormSchema,
+  TherapistRegisterFormValues,
 } from "@/utils/formSchemas";
 import { useState } from "react";
 import { fetchAddress } from "@/utils/fetchAddress";
 import { transformAddressToLongLat } from "@/utils/transformAddressToLongLat";
-import { mutualDefaultValues } from "@/utils/defaultValues";
+import { therapistRegisterValues } from "@/utils/defaultValues";
 import { FormLayout } from "../FormLayout/FormLayout";
 import { UserFields } from "../FormsComponents/UserFields";
 import { AddressFields } from "../FormsComponents/AddressFields";
-import { clientRegister } from "@/utils/serverRequests";
+import { therapistRegister } from "@/utils/serverRequests";
 import toast from "react-hot-toast";
-import { signIn, useSession } from "next-auth/react";
+import { signIn } from "next-auth/react";
+import { TherapistFields } from "../FormsComponents/TherapistFields";
 import { useRouter } from "next/navigation";
 
-const ClientRegisterForm = () => {
+const TherapistRegisterForm = () => {
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const form = useForm<ClientRegisterFormValues>({
-    resolver: zodResolver(clientRegisterFormSchema),
-    defaultValues: mutualDefaultValues,
+  const form = useForm<TherapistRegisterFormValues>({
+    resolver: zodResolver(therapistRegisterFormSchema),
+    defaultValues: therapistRegisterValues,
   });
-
-  const [loading, setLoading] = useState(false);
 
   const handleCepChange = async (cep: string) => {
     await fetchAddress(cep, setLoading, form);
   };
 
-  async function onSubmit(values: ClientRegisterFormValues) {
+  async function onSubmit(values: TherapistRegisterFormValues) {
     setLoading(true);
     try {
       const { longitude, latitude } = await transformAddressToLongLat(values);
+      const specialityArray = values.speciality
+        .split(",")
+        .map((item) => item.trim());
 
       const formData = {
         name: values.name,
         email: values.email,
         password: values.password,
+        phoneNumber: values.phoneNumber,
+        speciality: specialityArray,
+        mediumCost: values.mediumCost,
+        inscriptionNumber: values.inscriptionNumber,
         location: {
           type: "Point",
           coordinates: [longitude, latitude],
@@ -49,7 +56,7 @@ const ClientRegisterForm = () => {
       };
 
       try {
-        const response = await clientRegister(formData);
+        const response = await therapistRegister(formData);
         if (response.status !== 201) {
           return toast.error("Erro ao realizar cadastro!");
         }
@@ -57,7 +64,7 @@ const ClientRegisterForm = () => {
           email: values.email,
           password: values.password,
           redirect: false,
-          userType: "client",
+          userType: "therapist",
         });
         if (login && login.status !== 200) {
           return toast.error("Erro ao realizar login!");
@@ -78,16 +85,17 @@ const ClientRegisterForm = () => {
   }
 
   return (
-    <FormLayout<ClientRegisterFormValues>
+    <FormLayout<TherapistRegisterFormValues>
       form={form}
       onSubmit={onSubmit}
       loading={loading}
       type="register"
     >
-      <UserFields<ClientRegisterFormValues> form={form} type="register" />
+      <UserFields<TherapistRegisterFormValues> form={form} type="register" />
+      <TherapistFields form={form} />
       <AddressFields form={form} handleCepChange={handleCepChange} />
     </FormLayout>
   );
 };
 
-export default ClientRegisterForm;
+export default TherapistRegisterForm;

@@ -21,7 +21,9 @@ export const FormLayout = <T extends FieldValues>({
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit(onSubmit, (errors) => {
+          console.log("Erros de validação:", errors);
+        })}
         className="max-w-4xl mx-auto p-4 bg-background rounded-lg shadow-md space-y-6"
       >
         {children}

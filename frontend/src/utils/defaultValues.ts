@@ -13,6 +13,14 @@ export const mutualDefaultValues = {
   },
 };
 
+export const therapistRegisterValues = {
+  ...mutualDefaultValues,
+  phoneNumber: "",
+  speciality: "",
+  mediumCost: "",
+  inscriptionNumber: "",
+};
+
 export const loginDefaultValues = {
   email: "",
   password: "",

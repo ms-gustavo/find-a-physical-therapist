@@ -1,5 +1,5 @@
 import axios from "axios";
-import { apiClientRegister } from "./apiEndpoints";
+import { apiClientRegister, apiTherapistRegister } from "./apiEndpoints";
 
 type ClientRegisterServerValues = {
   name: string;
@@ -10,7 +10,26 @@ type ClientRegisterServerValues = {
     coordinates: number[];
   };
 };
+type TherapistRegisterServerValues = {
+  name: string;
+  email: string;
+  password: string;
+  phoneNumber: string;
+  speciality: string[];
+  mediumCost: string;
+  inscriptionNumber: string;
+  location: {
+    type: string;
+    coordinates: number[];
+  };
+};
 
 export const clientRegister = async (values: ClientRegisterServerValues) => {
   return await axios.post(apiClientRegister, values);
+};
+
+export const therapistRegister = async (
+  values: TherapistRegisterServerValues
+) => {
+  return await axios.post(apiTherapistRegister, values);
 };

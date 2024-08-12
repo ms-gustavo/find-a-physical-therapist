@@ -6,23 +6,22 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { UseFormReturn } from "react-hook-form";
-import { ClientRegisterFormValues } from "@/utils/formSchemas";
+import { FieldValues, Path, UseFormReturn } from "react-hook-form";
 
-interface AddressFieldsProps {
-  form: UseFormReturn<ClientRegisterFormValues>;
+interface AddressFieldsProps<T extends FieldValues> {
+  form: UseFormReturn<T>;
   handleCepChange: (cep: string) => void;
 }
 
-export const AddressFields: React.FC<AddressFieldsProps> = ({
+export const AddressFields = <T extends FieldValues>({
   form,
   handleCepChange,
-}) => (
+}: AddressFieldsProps<T>) => (
   <>
     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
       <FormField
         control={form.control}
-        name="address.cep"
+        name={"address.cep" as Path<T>}
         render={({ field }) => (
           <FormItem>
             <FormLabel>CEP</FormLabel>
@@ -40,7 +39,7 @@ export const AddressFields: React.FC<AddressFieldsProps> = ({
       />
       <FormField
         control={form.control}
-        name="address.street"
+        name={"address.street" as Path<T>}
         render={({ field }) => (
           <FormItem>
             <FormLabel>Endereço</FormLabel>
@@ -59,7 +58,7 @@ export const AddressFields: React.FC<AddressFieldsProps> = ({
     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
       <FormField
         control={form.control}
-        name="address.neighborhood"
+        name={"address.neighborhood" as Path<T>}
         render={({ field }) => (
           <FormItem>
             <FormLabel>Bairro</FormLabel>
@@ -76,7 +75,7 @@ export const AddressFields: React.FC<AddressFieldsProps> = ({
       />
       <FormField
         control={form.control}
-        name="address.city"
+        name={"address.city" as Path<T>}
         render={({ field }) => (
           <FormItem>
             <FormLabel>Cidade</FormLabel>
@@ -95,7 +94,7 @@ export const AddressFields: React.FC<AddressFieldsProps> = ({
     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
       <FormField
         control={form.control}
-        name="address.state"
+        name={"address.state" as Path<T>}
         render={({ field }) => (
           <FormItem>
             <FormLabel>Estado</FormLabel>
@@ -112,7 +111,7 @@ export const AddressFields: React.FC<AddressFieldsProps> = ({
       />
       <FormField
         control={form.control}
-        name="address.number"
+        name={"address.number" as Path<T>}
         render={({ field }) => (
           <FormItem>
             <FormLabel>Número</FormLabel>
@@ -130,7 +129,7 @@ export const AddressFields: React.FC<AddressFieldsProps> = ({
     </div>
     <FormField
       control={form.control}
-      name="address.complement"
+      name={"address.complement" as Path<T>}
       render={({ field }) => (
         <FormItem>
           <FormLabel>Complemento</FormLabel>
