@@ -21,6 +21,7 @@ export const FormLayout = <T extends FieldValues>({
   return (
     <Form {...form}>
       <form
+        id="form-layout"
         onSubmit={form.handleSubmit(onSubmit, (errors) => {
           console.log("Erros de validação:", errors);
         })}
@@ -28,6 +29,7 @@ export const FormLayout = <T extends FieldValues>({
       >
         {children}
         <Button
+          id="submit-button"
           type="submit"
           className="w-full bg-primary hover:bg-primary-dark rounded-md py-2"
           disabled={loading}

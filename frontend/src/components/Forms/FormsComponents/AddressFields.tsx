@@ -27,7 +27,7 @@ export const AddressFields = <T extends FieldValues>({
             <FormLabel>CEP</FormLabel>
             <FormControl>
               <Input
-                placeholder="Digite seu CEP"
+                placeholder="Digite seu CEP (XXXXX-XXX)"
                 {...field}
                 onBlur={(e) => handleCepChange(e.target.value)}
                 className="border border-gray-300 p-2 rounded-md"

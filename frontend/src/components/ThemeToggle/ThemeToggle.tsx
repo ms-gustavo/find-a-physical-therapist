@@ -22,13 +22,14 @@ export default function ThemeToggle() {
 
   return (
     <button
+      data-value="theme-toggle"
       onClick={toggleTheme}
       className="text-light-text dark:text-dark-text"
     >
       {theme === "light" ? (
-        <MoonIcon className="h-6 w-6" />
+        <MoonIcon data-value="moon-icon" className="h-6 w-6" />
       ) : (
-        <SunIcon className="h-6 w-6" />
+        <SunIcon data-value="sun-icon" className="h-6 w-6" />
       )}
     </button>
   );

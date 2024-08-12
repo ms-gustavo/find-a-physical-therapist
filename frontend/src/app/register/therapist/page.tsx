@@ -3,7 +3,7 @@
 import TherapistRegisterForm from "@/components/Forms/TherapistRegisterForm/TherapistRegisterForm";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 
 const TherapistRegisterPage = () => {
   const { data: session } = useSession();
@@ -25,7 +25,7 @@ const TherapistRegisterPage = () => {
       >
         Registrar como Terapeuta
       </h1>
-      <TherapistRegisterForm data-value="therapist-register-form" />
+      <TherapistRegisterForm />
     </div>
   );
 };

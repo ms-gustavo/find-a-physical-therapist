@@ -33,10 +33,10 @@ const Navbar = () => {
         </div>
 
         <div className="flex space-x-4">
-          <ThemeToggle data-value="theme-toggle" />
+          <ThemeToggle />
           {session ? (
             <>
-              <Popover>
+              <Popover data-value="authenticated-popover">
                 <PopoverTrigger>
                   <UserIcon
                     id="user-icon"
@@ -68,7 +68,10 @@ const Navbar = () => {
                 <PopoverTrigger data-value="login-popover">
                   Login
                 </PopoverTrigger>
-                <PopoverContent className="flex flex-col space-y-2 p-2">
+                <PopoverContent
+                  data-value="login-popover-content"
+                  className="flex flex-col space-y-2 p-2"
+                >
                   <Link
                     id="pacient-login"
                     href="/login/client"
@@ -90,7 +93,10 @@ const Navbar = () => {
                 <PopoverTrigger data-value="register-popover">
                   Registrar
                 </PopoverTrigger>
-                <PopoverContent className="flex flex-col space-y-2 p-2">
+                <PopoverContent
+                  data-value="register-popover-content"
+                  className="flex flex-col space-y-2 p-2"
+                >
                   <Link
                     id="pacient-register"
                     href="/register/client"
