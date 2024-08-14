@@ -91,11 +91,7 @@ const TherapistRegisterForm = () => {
       loading={loading}
       type="register"
     >
-      <UserFields<TherapistRegisterFormValues>
-        data-value="user-fields-form"
-        form={form}
-        type="register"
-      />
+      <UserFields<TherapistRegisterFormValues> form={form} type="register" />
       <TherapistFields form={form} />
       <AddressFields form={form} handleCepChange={handleCepChange} />
     </FormLayout>

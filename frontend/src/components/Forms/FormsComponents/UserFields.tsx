@@ -22,6 +22,7 @@ export const UserFields = <
   <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
     {type === "register" && (
       <FormField
+        data-value="test"
         control={form.control}
         name={"name" as Path<T>}
         render={({ field }) => (

@@ -1,5 +1,5 @@
 export const mutualDefaultValues = {
-  username: "",
+  name: "",
   email: "",
   password: "",
   address: {
