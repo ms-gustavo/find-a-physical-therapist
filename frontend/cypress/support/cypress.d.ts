@@ -8,6 +8,15 @@ declare namespace Cypress {
     openRegisterPopover(): Chainable<Subject>;
     checkToast(message: string): Chainable<Subject>;
     checkInvalidInput(message: string): Chainable<Subject>;
+    getLoginFields(
+      email: string = "",
+      password: string = ""
+    ): Chainable<Subject>;
+    loginATherapist(
+      email: string = "",
+      password: string = ""
+    ): Chainable<Subject>;
+    loginAClient(email: string = "", password: string = ""): Chainable<Subject>;
     registerATherapist(
       name: string = "",
       email: string = "",

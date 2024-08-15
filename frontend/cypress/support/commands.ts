@@ -83,6 +83,29 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add(
+  "getLoginFields",
+  (email: string = "", password: string = "") => {
+    cy.get("label").contains("Email");
+    cy.get('input[name="email"]')
+      .should("exist")
+      .then(($input) => {
+        if (email) {
+          cy.wrap($input).type(email);
+        }
+      });
+
+    cy.get("label").contains("Senha");
+    cy.get('input[name="password"]')
+      .should("exist")
+      .then(($input) => {
+        if (password) {
+          cy.wrap($input).type(password);
+        }
+      });
+  }
+);
+
+Cypress.Commands.add(
   "getTherapistFields",
   (
     phoneNumber: string = "",
@@ -304,6 +327,56 @@ Cypress.Commands.add(
     cy.get("#submit-button")
       .should("exist")
       .and("contain.text", "Cadastrar")
+      .click();
+  }
+);
+
+Cypress.Commands.add(
+  "loginATherapist",
+  (email: string = "", password: string = "") => {
+    cy.get("[data-value=login-popover]").should("exist").click();
+    cy.get("#therapist-login").should("exist").click();
+    cy.url().should("include", "/login/therapist");
+    cy.get("#therapist-login-page")
+      .should("exist")
+      .within(() => {
+        cy.get("#therapist-login-page-header")
+          .should("exist")
+          .and("contain.text", "Login como Terapeuta");
+        cy.get("#form-layout")
+          .should("exist")
+          .within(() => {
+            cy.getLoginFields(email, password);
+          });
+      });
+    cy.get("#submit-button")
+      .should("exist")
+      .and("contain.text", "Entrar")
+      .click();
+  }
+);
+
+Cypress.Commands.add(
+  "loginAClient",
+  (email: string = "", password: string = "") => {
+    cy.get("[data-value=login-popover]").should("exist").click();
+    cy.get("#pacient-login").should("exist").click();
+    cy.url().should("include", "/login/client");
+    cy.get("#client-login-page")
+      .should("exist")
+      .within(() => {
+        cy.get("#client-login-page-header")
+          .should("exist")
+          .and("contain.text", "Login como Paciente");
+        cy.get("#form-layout")
+          .should("exist")
+          .within(() => {
+            cy.getLoginFields(email, password);
+          });
+      });
+    cy.get("#submit-button")
+      .should("exist")
+      .and("contain.text", "Entrar")
       .click();
   }
 );

@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "cypress:open": "cypress open"
+    "cypress:open": "cross-env NODE_ENV=test cypress open",
+    "cypress:run": "cypress run",
+    "test:dev": "cross-env NEXT_PUBLIC_NODE_ENV=test next dev"
   },
   "dependencies": {
     "@headlessui/react": "^2.1.2",
@@ -38,6 +40,7 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "cross-env": "^7.0.3",
     "cypress": "^13.13.2",
     "eslint": "^8",
     "eslint-config-next": "14.2.5",

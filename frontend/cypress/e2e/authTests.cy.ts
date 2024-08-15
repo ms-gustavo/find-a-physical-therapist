@@ -1,5 +1,6 @@
 beforeEach(() => {
   cy.visit("/");
+  cy.changeThemeColor();
 });
 
 describe("Register Tests", () => {
@@ -229,7 +230,6 @@ describe("Register Tests", () => {
         "Cypress Client",
         "cypress@client.com",
         "123456",
-
         "01001000",
         "Praça da Sé",
         "Sé",
@@ -296,6 +296,54 @@ describe("Register Tests", () => {
         undefined
       );
       cy.checkInvalidInput("O CEP é obrigatório");
+    });
+  });
+});
+
+describe("Login Tests", () => {
+  describe("Login Therapist Tests", () => {
+    it("should login an therapist", () => {
+      cy.loginATherapist("cypress@therapist.com", "123456");
+      cy.checkToast("Login realizado com sucesso! Redirecionando...");
+      cy.get("#user-icon").should("exist");
+    });
+
+    it("should return an validator error credentials invalid", () => {
+      cy.loginATherapist("cypress@therapist.com", "1234567");
+      cy.checkToast("Erro ao realizar login!");
+    });
+
+    it("should return an validator error when there is no email", () => {
+      cy.loginATherapist(undefined, "123456");
+      cy.checkInvalidInput("Email inválido");
+    });
+
+    it("should return an validator error when there is no password", () => {
+      cy.loginATherapist("cypress@therapist.com", undefined);
+      cy.checkInvalidInput("A senha deve ter no mínimo 6 caracteres");
+    });
+  });
+
+  describe("Login Client Tests", () => {
+    it("should login an client", () => {
+      cy.loginAClient("cypress@client.com", "123456");
+      cy.checkToast("Login realizado com sucesso! Redirecionando...");
+      cy.get("#user-icon").should("exist");
+    });
+
+    it("should return an validator error credentials invalid", () => {
+      cy.loginAClient("cypress@client.com", "1234567");
+      cy.checkToast("Erro ao realizar login!");
+    });
+
+    it("should return an validator error when there is no email", () => {
+      cy.loginAClient(undefined, "123456");
+      cy.checkInvalidInput("Email inválido");
+    });
+
+    it("should return an validator error when there is no password", () => {
+      cy.loginAClient("cypress@client.com", undefined);
+      cy.checkInvalidInput("A senha deve ter no mínimo 6 caracteres");
     });
   });
 });

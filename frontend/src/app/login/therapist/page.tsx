@@ -23,7 +23,7 @@ const TherapistLoginPage = () => {
         id="therapist-login-page-header"
         className="text-2xl text-center font-bold mb-4"
       >
-        Login como Terapueta
+        Login como Terapeuta
       </h1>
       <UserLoginForm data-value="therapist-login-form" userType="therapist" />
     </div>
