@@ -30,8 +30,17 @@ const connectionWithRetry = () => {
   console.log(`MongoDB connection with retry`);
   mongoose
     .connect(MONGO_URI!)
-    .then(() => {
+    .then(async () => {
       console.log(`Connected to MongoDB (${env})`);
+
+      if (env === "test") {
+        try {
+          await mongoose.connection.db.dropDatabase();
+          console.log("Banco de dados limpo para ambiente de teste");
+        } catch (error: any) {
+          console.error(`Erro ao limpar banco de dados: ${error}`);
+        }
+      }
     })
     .catch((error) => {
       console.error(`MongoDB connection error: ${error}`);

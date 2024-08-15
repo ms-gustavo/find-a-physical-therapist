@@ -10,7 +10,6 @@ import { isTherapist } from "../utils/typeGuards";
 
 export const registerNewClient = async (req: Request, res: Response) => {
   const { name, email, password, location }: IClient = req.body;
-
   try {
     const userCheck = await findUser(email, "register", "Client");
     if (userCheck.status !== 200) {
