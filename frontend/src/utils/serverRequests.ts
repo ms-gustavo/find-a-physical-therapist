@@ -1,5 +1,9 @@
 import axios from "axios";
-import { apiClientRegister, apiTherapistRegister } from "./apiEndpoints";
+import {
+  apiClientRegister,
+  apiGetAllTherapists,
+  apiTherapistRegister,
+} from "./apiEndpoints";
 
 type ClientRegisterServerValues = {
   name: string;
@@ -32,4 +36,8 @@ export const therapistRegister = async (
   values: TherapistRegisterServerValues
 ) => {
   return await axios.post(apiTherapistRegister, values);
+};
+
+export const getAllTherapists = async () => {
+  return await axios.get(apiGetAllTherapists);
 };

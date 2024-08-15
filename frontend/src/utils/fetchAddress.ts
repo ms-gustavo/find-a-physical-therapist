@@ -1,5 +1,7 @@
 import { UseFormReturn, FieldValues, Path } from "react-hook-form";
 import { addressRequest } from "./axiosRequests";
+import { reverseGeocodeCoordinates } from "./geocode";
+import { Therapist } from "@/app/therapists/all/page";
 
 export const fetchAddress = async <T extends FieldValues>(
   cep: string,
@@ -22,3 +24,22 @@ export const fetchAddress = async <T extends FieldValues>(
     setLoading(false);
   }
 };
+
+export async function fetchTherapistsWithAddresses(
+  therapists: Therapist[]
+): Promise<Therapist[]> {
+  return Promise.all(
+    therapists.map(async (therapist) => {
+      try {
+        const address = await reverseGeocodeCoordinates(
+          therapist.location.coordinates[1],
+          therapist.location.coordinates[0]
+        );
+        return { ...therapist, address };
+      } catch (error) {
+        console.error("Erro ao converter coordenadas para endereço:", error);
+        return { ...therapist, address: {} };
+      }
+    })
+  );
+}

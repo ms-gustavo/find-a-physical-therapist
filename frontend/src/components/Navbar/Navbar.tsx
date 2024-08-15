@@ -33,7 +33,7 @@ const Navbar = () => {
         </div>
 
         <div className="flex space-x-4">
-          <ThemeToggle />
+          {/* <ThemeToggle /> */}
           {session ? (
             <>
               <Popover data-value="authenticated-popover">
