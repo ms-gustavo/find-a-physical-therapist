@@ -52,7 +52,6 @@ export const searchTherapistByName = async (req: Request, res: Response) => {
     if (name) {
       query.name = { $regex: name, $options: "i" };
     }
-
     const therapists = await Therapist.find(query);
     if (therapists.length === 0) {
       return res.status(204).json();
@@ -74,7 +73,6 @@ export const searchTherapistByName = async (req: Request, res: Response) => {
 
 export const searchTherapistsByQuery = async (req: Request, res: Response) => {
   const { location, speciality, maxDistance, minCost, maxCost } = req.query;
-
   try {
     const query: any = {};
 
@@ -93,11 +91,12 @@ export const searchTherapistsByQuery = async (req: Request, res: Response) => {
       const distance = maxDistance ? parseInt(maxDistance as string) : 5000;
       query.location = {
         $near: {
-          $geometry: { type: "Point", coordinates: [lng, lat] },
+          $geometry: { type: "Point", coordinates: [lat, lng] },
           $maxDistance: distance,
         },
       };
     }
+
     const therapists = await Therapist.find(query);
     if (therapists.length === 0) {
       return res.status(204).json();
