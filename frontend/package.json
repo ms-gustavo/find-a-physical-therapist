@@ -7,8 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "cypress:open": "cross-env NODE_ENV=test cypress open",
+    "cypress:open": "cypress open",
+    "cypress:test:open": "cross-env NODE_ENV=test cypress open",
     "cypress:run": "cypress run",
+    "cypress:test:run": "cross-env NODE_ENV=test cypress run",
     "test:dev": "cross-env NEXT_PUBLIC_NODE_ENV=test next dev"
   },
   "dependencies": {
@@ -25,6 +27,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "dotenv": "^16.4.5",
+    "leaflet": "^1.9.4",
     "lucide-react": "^0.427.0",
     "next": "14.2.5",
     "next-auth": "^4.24.7",
@@ -32,11 +35,13 @@
     "react-dom": "^18",
     "react-hook-form": "^7.52.2",
     "react-hot-toast": "^2.4.1",
+    "react-leaflet": "^4.2.1",
     "tailwind-merge": "^2.4.0",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@types/leaflet": "^1.9.12",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

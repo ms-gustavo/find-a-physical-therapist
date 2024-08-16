@@ -1,9 +1,19 @@
 "use client";
 
 import { fetchTherapistsWithAddresses } from "@/utils/fetchAddress";
-import { getAllTherapists } from "@/utils/serverRequests";
+import {
+  getAllTherapists,
+  getTherapistsByName,
+  getTherapistsByQuery,
+} from "@/utils/serverRequests";
 import React, { useEffect, useState } from "react";
 import { SkeletonCard } from "@/components/SkeletonCard/SkeletonCard";
+import { useSession } from "next-auth/react";
+import toast from "react-hot-toast";
+import ToggleView from "@/components/ToggleView/ToggleView";
+import RenderTherapistsList from "@/components/AllTherapistsList/RenderTherapistsList";
+import RenderTherapistsMap from "@/components/AllTherapistsList/RenderTherapistsMap";
+import SearchForm from "@/components/SearchForm/SearchForm";
 
 export interface Therapist {
   name: string;
@@ -27,6 +37,11 @@ export interface Therapist {
 const TherapistsPage = () => {
   const [therapists, setTherapists] = useState<Therapist[]>([]);
   const [loading, setLoading] = useState(true);
+  const [view, setView] = useState("list");
+  const [userLocation, setUserLocation] = useState<[number, number] | null>(
+    null
+  );
+  const { data: session } = useSession();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -34,7 +49,7 @@ const TherapistsPage = () => {
       try {
         const response = await getAllTherapists();
         if (response.status !== 200) {
-          console.log("erro");
+          toast.error("Erro ao carregar a página, tente novamente");
           return;
         }
         const therapistsData = response.data.therapists as Therapist[];
@@ -43,6 +58,7 @@ const TherapistsPage = () => {
         );
         setTherapists(therapistsWithAddresses);
       } catch (error: any) {
+        toast.error("Erro ao carregar a página, tente novamente");
         console.error(`${error.message}`);
       } finally {
         setLoading(false);
@@ -50,42 +66,77 @@ const TherapistsPage = () => {
     };
 
     fetchData();
-  }, []);
+
+    if (session) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUserLocation([
+            position.coords.latitude,
+            position.coords.longitude,
+          ]);
+        },
+        (error) => {
+          toast(
+            "Para utilizar todas as funcionalidades é necessário ativar a localização"
+          );
+          console.error("Error getting user location:", error);
+        }
+      );
+    }
+  }, [session]);
+
+  const handleSearch = async (params: any) => {
+    setLoading(true);
+    try {
+      const results =
+        params.name !== undefined
+          ? await getTherapistsByName(params.name)
+          : await getTherapistsByQuery(params);
+      if (results.length === 0) {
+        setTherapists([]);
+        return toast("Não há terapeutas cadastrados baseados na sua pesquisa", {
+          icon: "😕",
+        });
+      }
+      const therapistsWithAddresses = await fetchTherapistsWithAddresses(
+        results.therapists
+      );
+
+      setTherapists(therapistsWithAddresses);
+    } catch (error: any) {
+      toast.error(error.message);
+      console.error("erro", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <main className="min-h-screen p-8">
-      <h1 className="text-3xl font-bold mb-8 text-center">
-        Todos os Fisioterapeutas
-      </h1>
+      <h1 className="text-3xl font-bold mb-8 text-center">Fisioterapeutas</h1>
+      <ToggleView onChangeView={setView} />
+      <SearchForm onSearch={handleSearch} userLocation={userLocation!} />
       {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {Array.from({ length: 6 }).map((_, index) => (
             <SkeletonCard key={index} />
           ))}
         </div>
+      ) : therapists.length === 0 ? (
+        <p className="text-center text-gray-500 mt-8">
+          Não há terapeutas cadastrados baseados na sua pesquisa.
+        </p>
+      ) : view === "list" ? (
+        therapists && RenderTherapistsList(therapists)
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {therapists.map((therapist) => (
-            <div
-              key={therapist.inscriptionNumber}
-              className="p-6 rounded-lg shadow-lg flex flex-col items-start"
-            >
-              <h2 className="text-xl font-semibold mb-2">{therapist.name}</h2>
-              <h3>CREFITO: {therapist.inscriptionNumber}</h3>
-              <p className="text-gray-700">{therapist.speciality.join(", ")}</p>
-              <p className="text-gray-500">
-                {therapist.address!.road}, {therapist.address!.city} -{" "}
-                {therapist.address!.state}
-              </p>
-              <p className="text-gray-500">
-                CEP: {therapist.address!.postcode}
-              </p>
-              <p className="text-gray-500">
-                Custo médio: R${therapist.mediumCost}
-              </p>
-            </div>
-          ))}
-        </div>
+        userLocation && (
+          <div style={{ height: "500px" }}>
+            <RenderTherapistsMap
+              userLocation={userLocation}
+              therapists={therapists}
+            />
+          </div>
+        )
       )}
     </main>
   );

@@ -19,20 +19,6 @@ const HomePage = () => {
         </Link>
       </section>
 
-      <section className="w-full max-w-2xl p-6 bg-white shadow-md rounded-lg mb-12">
-        <h2 className="text-2xl font-semibold mb-4 text-gray-800">
-          Encontre o seu terapeuta
-        </h2>
-        <input
-          type="text"
-          className="w-full border border-gray-300 rounded-lg py-2 px-4 mb-4"
-          placeholder="Digite o nome ou localização"
-        />
-        <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 w-full">
-          Pesquisar
-        </button>
-      </section>
-
       {/* Seções de Destaque */}
       <section className="w-full max-w-5xl py-12 px-4">
         <h2 className="text-2xl font-semibold mb-8 text-gray-800 text-center">

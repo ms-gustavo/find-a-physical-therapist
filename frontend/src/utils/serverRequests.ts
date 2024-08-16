@@ -2,6 +2,8 @@ import axios from "axios";
 import {
   apiClientRegister,
   apiGetAllTherapists,
+  apiGetTherapistsByName,
+  apiGetTherapistsByQuery,
   apiTherapistRegister,
 } from "./apiEndpoints";
 
@@ -40,4 +42,19 @@ export const therapistRegister = async (
 
 export const getAllTherapists = async () => {
   return await axios.get(apiGetAllTherapists);
+};
+
+export const getTherapistsByName = async (name: string) => {
+  const response = await axios.get(`${apiGetTherapistsByName}${name}`);
+  if (response.status !== 200) {
+    return [];
+  }
+  console.log("response by name", response);
+  return response.data;
+};
+
+export const getTherapistsByQuery = async (query: any) => {
+  console.log("get by query");
+  const response = await axios.get(apiGetTherapistsByQuery, { params: query });
+  return response.data;
 };
