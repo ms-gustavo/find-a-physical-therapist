@@ -888,7 +888,13 @@ describe("Search Controller", () => {
     });
 
     it("should return 204 No Content when there are no therapists", async () => {
-      const findSpy = jest.spyOn(Therapist, "find").mockResolvedValueOnce([]);
+      const findSpy = jest.spyOn(Therapist, "find").mockImplementation(
+        () =>
+          ({
+            skip: jest.fn().mockReturnThis(),
+            limit: jest.fn().mockResolvedValue([]),
+          } as unknown as ReturnType<typeof Therapist.find>)
+      );
       const response = await request(app).get(searchApi.getAllTherapists);
       expect(response.status).toBe(204);
 
@@ -896,9 +902,15 @@ describe("Search Controller", () => {
     });
 
     it("should handle errors and return 500", async () => {
-      const findSpy = jest
-        .spyOn(Therapist, "find")
-        .mockRejectedValue(new Error(userMessages.internalServerError));
+      const findSpy = jest.spyOn(Therapist, "find").mockImplementation(
+        () =>
+          ({
+            skip: jest.fn().mockReturnThis(),
+            limit: jest
+              .fn()
+              .mockRejectedValue(new Error(userMessages.internalServerError)),
+          } as unknown as ReturnType<typeof Therapist.find>)
+      );
       const response = await request(app).get(searchApi.getAllTherapists);
 
       expect(response.status).toBe(500);
@@ -924,7 +936,13 @@ describe("Search Controller", () => {
     });
 
     it("should return 204 No Content when there are no therapists", async () => {
-      const findSpy = jest.spyOn(Therapist, "find").mockResolvedValueOnce([]);
+      const findSpy = jest.spyOn(Therapist, "find").mockImplementation(
+        () =>
+          ({
+            skip: jest.fn().mockReturnThis(),
+            limit: jest.fn().mockResolvedValue([]),
+          } as unknown as ReturnType<typeof Therapist.find>)
+      );
       const response = await request(app).get(searchApi.searchByName);
       expect(response.status).toBe(204);
 
@@ -932,9 +950,15 @@ describe("Search Controller", () => {
     });
 
     it("should handle errors and return 500", async () => {
-      const findSpy = jest
-        .spyOn(Therapist, "find")
-        .mockRejectedValue(new Error(userMessages.internalServerError));
+      const findSpy = jest.spyOn(Therapist, "find").mockImplementation(
+        () =>
+          ({
+            skip: jest.fn().mockReturnThis(),
+            limit: jest
+              .fn()
+              .mockRejectedValue(new Error(userMessages.internalServerError)),
+          } as unknown as ReturnType<typeof Therapist.find>)
+      );
       const response = await request(app).get(searchApi.searchByName);
 
       expect(response.status).toBe(500);
@@ -991,7 +1015,12 @@ describe("Search Controller", () => {
     });
 
     it("should return 204 No Content when there are no therapists", async () => {
-      const findSpy = jest.spyOn(Therapist, "find").mockResolvedValueOnce([]);
+      const findSpy = jest.spyOn(Therapist, "aggregate").mockImplementation(
+        () =>
+          ({
+            exec: jest.fn().mockResolvedValue([]),
+          } as unknown as ReturnType<typeof Therapist.aggregate>)
+      );
       const response = await request(app).get(searchApi.searchByQuery);
       expect(response.status).toBe(204);
 
@@ -999,9 +1028,14 @@ describe("Search Controller", () => {
     });
 
     it("should handle errors and return 500", async () => {
-      const findSpy = jest
-        .spyOn(Therapist, "find")
-        .mockRejectedValue(new Error(userMessages.internalServerError));
+      const findSpy = jest.spyOn(Therapist, "aggregate").mockImplementation(
+        () =>
+          ({
+            exec: jest
+              .fn()
+              .mockRejectedValue(new Error(userMessages.internalServerError)),
+          } as unknown as ReturnType<typeof Therapist.aggregate>)
+      );
       const response = await request(app).get(searchApi.searchByQuery);
 
       expect(response.status).toBe(500);
@@ -1116,7 +1150,6 @@ describe("Review Controller", () => {
           therapistId: simulatedId,
           ...createNewReview,
         });
-      console.log(createAReviewResponse.body);
       expect(createAReviewResponse.status).toBe(404);
       expect(createAReviewResponse.body).toBe(
         therapistMessages.therapistNotFound
