@@ -14,6 +14,7 @@ import ToggleView from "@/components/ToggleView/ToggleView";
 import RenderTherapistsList from "@/components/AllTherapistsList/RenderTherapistsList";
 import RenderTherapistsMap from "@/components/AllTherapistsList/RenderTherapistsMap";
 import SearchForm from "@/components/SearchForm/SearchForm";
+import { Paginate } from "@/components/Pagination/Paginate";
 
 export interface Therapist {
   name: string;
@@ -41,22 +42,30 @@ const TherapistsPage = () => {
   const [userLocation, setUserLocation] = useState<[number, number] | null>(
     null
   );
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const { data: session } = useSession();
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await getAllTherapists();
+        let response;
+        if (view !== "list") {
+          response = await getAllTherapists(currentPage, 1000);
+        }
+        response = await getAllTherapists(currentPage);
         if (response.status !== 200) {
           toast.error("Erro ao carregar a página, tente novamente");
           return;
         }
+        const totalPages = response.data.totalPages;
         const therapistsData = response.data.therapists as Therapist[];
         const therapistsWithAddresses = await fetchTherapistsWithAddresses(
           therapistsData
         );
         setTherapists(therapistsWithAddresses);
+        setTotalPages(totalPages);
       } catch (error: any) {
         toast.error("Erro ao carregar a página, tente novamente");
         console.error(`${error.message}`);
@@ -83,7 +92,11 @@ const TherapistsPage = () => {
         }
       );
     }
-  }, [session]);
+  }, [session, currentPage, view]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
 
   const handleSearch = async (params: any) => {
     setLoading(true);
@@ -127,7 +140,16 @@ const TherapistsPage = () => {
           Não há terapeutas cadastrados baseados na sua pesquisa.
         </p>
       ) : view === "list" ? (
-        therapists && RenderTherapistsList(therapists)
+        therapists && (
+          <>
+            <Paginate
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+            {RenderTherapistsList(therapists)}
+          </>
+        )
       ) : (
         userLocation && (
           <div style={{ height: "500px" }}>

@@ -40,8 +40,13 @@ export const therapistRegister = async (
   return await axios.post(apiTherapistRegister, values);
 };
 
-export const getAllTherapists = async () => {
-  return await axios.get(apiGetAllTherapists);
+export const getAllTherapists = async (currentPage: number, limit = 6) => {
+  return await axios.get(apiGetAllTherapists, {
+    params: {
+      page: currentPage,
+      limit: limit,
+    },
+  });
 };
 
 export const getTherapistsByName = async (name: string) => {
