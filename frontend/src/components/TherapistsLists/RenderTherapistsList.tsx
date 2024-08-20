@@ -1,7 +1,14 @@
-import { Therapist } from "@/app/therapists/all/page";
+import React from "react";
+import { Therapist } from "./AllTherapists";
 
-const RenderTherapistsList = (therapists: Therapist[]) => (
-  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+interface RenderTherapistsListProps {
+  therapists: Therapist[];
+}
+
+const RenderTherapistsList: React.FC<RenderTherapistsListProps> = ({
+  therapists,
+}) => (
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-2">
     {therapists.map((therapist) => (
       <div
         key={therapist.inscriptionNumber}

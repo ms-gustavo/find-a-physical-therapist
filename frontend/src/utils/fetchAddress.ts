@@ -1,7 +1,7 @@
 import { UseFormReturn, FieldValues, Path } from "react-hook-form";
 import { addressRequest } from "./axiosRequests";
 import { reverseGeocodeCoordinates } from "./geocode";
-import { Therapist } from "@/app/therapists/all/page";
+import { Therapist } from "@/components/TherapistsLists/AllTherapists";
 
 export const fetchAddress = async <T extends FieldValues>(
   cep: string,

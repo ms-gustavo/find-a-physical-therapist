@@ -55,7 +55,7 @@ export function Paginate({
           </PaginationItem>
         ))}
 
-        {totalPages > 1 && (
+        {totalPages > 1 && currentPage !== totalPages && (
           <>
             <PaginationItem>
               <PaginationNext

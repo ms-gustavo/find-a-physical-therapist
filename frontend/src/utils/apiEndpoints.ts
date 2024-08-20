@@ -12,5 +12,5 @@ export const apiClientLogin = `${apiUrl}auth/client/login`;
 export const apiTherapistRegister = `${apiUrl}auth/therapist/register`;
 export const apiTherapistLogin = `${apiUrl}auth/therapist/login`;
 export const apiGetAllTherapists = `${apiUrl}search/getalltherapists`;
-export const apiGetTherapistsByName = `${apiUrl}search/therapistbyname?name=`;
+export const apiGetTherapistsByName = `${apiUrl}search/therapistbyname`;
 export const apiGetTherapistsByQuery = `${apiUrl}search/therapists`;

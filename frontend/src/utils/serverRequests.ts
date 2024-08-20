@@ -49,17 +49,28 @@ export const getAllTherapists = async (currentPage: number, limit = 6) => {
   });
 };
 
-export const getTherapistsByName = async (name: string) => {
-  const response = await axios.get(`${apiGetTherapistsByName}${name}`);
+export const getTherapistsByName = async (
+  name: string,
+  currentPage: number
+) => {
+  const response = await axios.get(apiGetTherapistsByName, {
+    params: {
+      name: name,
+      page: currentPage,
+    },
+  });
   if (response.status !== 200) {
     return [];
   }
-  console.log("response by name", response);
   return response.data;
 };
 
-export const getTherapistsByQuery = async (query: any) => {
-  console.log("get by query");
-  const response = await axios.get(apiGetTherapistsByQuery, { params: query });
+export const getTherapistsByQuery = async (query: any, currentPage: number) => {
+  const response = await axios.get(apiGetTherapistsByQuery, {
+    params: {
+      query: query,
+      page: currentPage,
+    },
+  });
   return response.data;
 };
